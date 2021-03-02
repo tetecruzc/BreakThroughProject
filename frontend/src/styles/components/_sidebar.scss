@@ -1,0 +1,15 @@
+.side-bar{
+     padding: 0 !important;
+     @include respond (tab-land){width: max-content !important;} 
+}
+
+
+  .link-active, .link:hover{
+    border-left: 4px solid $color-primary !important;
+    background-color: #ededf1;
+    transition: all .3s;
+  }
+  .link{
+    border-left: 4px solid transparent;
+    cursor: pointer;
+  }
