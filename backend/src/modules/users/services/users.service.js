@@ -16,11 +16,12 @@ export default class UsersUsecase {
             let userExternalInfo = await this.ExternalUsersInfoUsecase.getInfo();
             users.forEach(function(user){
                 let userExists = userExternalInfo.filter(el => user.email === el.email)[0];
-                if (userExists){
+                if (userExists !== undefined){
                   user.username = userExists.username
                   user.company = userExists.company
                   user.geo = userExists.address.geo
-                }               
+                } 
+                userExists = undefined        
             }); 
             return users;
     }
