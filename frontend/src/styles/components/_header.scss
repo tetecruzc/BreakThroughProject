@@ -1,0 +1,10 @@
+.navbar{
+    // background-color: rgb(32, 41, 54);
+    background: $color-primary-dark; 
+     background: -webkit-linear-gradient(to bottom, $color-primary-dark, $color-primary); 
+     background: linear-gradient(to bottom, $color-primary-dark, $color-primary); 
+}
+.navbar-brand{
+    color: #fff !important;
+}
+
