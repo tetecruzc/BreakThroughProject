@@ -18,8 +18,12 @@ export abstract class AxiosRepository implements RepositoryInterface {
         return (await axios.put(this.URL + resource + '/' + id, data)).data;
     }
 
-    get(resource: string,id: number): Promise<any> {
-        throw new Error('Method not implemented.');
+    async get(resource: string,id: number): Promise<any> {
+        return (await axios.get(this.URL + resource + '/' + id)).data;
+    }
+
+    async getByMultiplesIds(resource: string, id: string): Promise<any> {
+        return (await axios.get(this.URL + resource + '/' + id)).data;
     }
 
     post(resource: string,data: {}): Promise<any> {

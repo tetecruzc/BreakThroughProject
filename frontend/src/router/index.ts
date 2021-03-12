@@ -1,19 +1,28 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
-import Home from '../views/Home.vue'
+import Home from '@/views/Home.vue'
 
 Vue.use(VueRouter)
 
-const routes: Array<RouteConfig> = [
+function getRoutes() : Array<any>{
+  return [{path: 'atc-activity'}, {path: 'activity-2'}]
+}
+
+export let routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'Home',
     component: Home
   },
   {
-    path: '/about',
-    name: 'About',
-    component: () => import('../views/About.vue')
+    path: '/users',
+    name: 'Users',
+    component: () => import('../views/Users.vue')
+  },
+  {
+    path: '/sent',
+    name: 'Sent',
+    component: () => import('../views/Sent.vue')
   }
 ]
 

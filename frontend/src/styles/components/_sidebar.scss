@@ -3,13 +3,23 @@
      @include respond (tab-land){width: max-content !important;} 
 }
 
-
-  .link-active, .link:hover{
-    border-left: 4px solid $color-primary !important;
-    background-color: #ededf1;
-    transition: all .3s;
-  }
   .link{
     border-left: 4px solid transparent;
+    color: $color-primary;
     cursor: pointer;
+      .badge{
+          font-size: 12px;
+          background-color: $color-primary;
+          color: #fff;
+          margin-left: auto;
+      }
+  }
+
+  .link:hover,
+  .router-link-active > .link,
+  .router-link-exact-active > .link{
+    border-left: 4px solid $color-primary !important;
+    background-color: #ededf1;
+    text-decoration: none !important;
+    transition: all .3s;
   }

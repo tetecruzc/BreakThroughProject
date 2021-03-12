@@ -200,6 +200,7 @@ export default class UsersTable extends Vue {
     getProfiles!: Profile[];
   @profiles.Action(ProfilesMethods.actions.FETCH_ALL_PROFILES)
     fetchProfiles!: () => boolean;
+
 }
 </script>
 
