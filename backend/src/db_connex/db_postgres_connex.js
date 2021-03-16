@@ -22,7 +22,7 @@ await dbClient.connect(err => {
         });
     } else {
         logger.info({
-            message:  '[PostgresConnection] Conección a la base de datos exitosa'
+            message:  '[PostgresConnection] Conexión a la base de datos exitosa'
         });
     }
 });

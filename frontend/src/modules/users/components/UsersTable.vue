@@ -35,7 +35,7 @@
       </b-container>
 
   <b-container>
-      <b-table class="b-table" sort-icon-right :items="getLocalUsers" :fields="currentFields" striped responsive :current-page="currentPage" :per-page="perPage" :filter="filter">
+      <b-table class="b-table" sort-icon-left :items="getLocalUsers" :fields="currentFields" striped responsive :current-page="currentPage" :per-page="perPage" :filter="filter">
       <template #cell(show_gender)="data">
               <b-avatar class="profile-avatar" :style="getGenderColor(data.item.gender)" :text="getNameInitials(data.item.name,data.item.lastname)" size="2rem"></b-avatar>
       </template>

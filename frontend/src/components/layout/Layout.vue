@@ -17,6 +17,7 @@ import SideNav from './SideNav.vue';
 import {users} from '../../store/namespaces';
 import UsersMethods from '../../store/users/methods/users.methods';
 import { Route } from '../../modules/routes/interfaces/routes.interface';
+import {getRoutes} from '../../utils/routes-functions'
 
 @Component({
     components:{
@@ -28,18 +29,7 @@ export default class Layout extends Vue {
     
    async mounted(){
         await this.fetchUserRoutes(1);
-        let { routes } = this.$router.options;
-        let id = ''
-        for (var i=0;i<this.getUserRoutes.length;i++){
-            const component = () =>  import('../../views/'+this.getUserRoutes[i].component)
-            if (this.getUserRoutes[i].submenu) id = '/:id' 
-            else id=''
-            let object = { path: '/'+this.getUserRoutes[i].url_route + id, component: component, name: this.getUserRoutes[i].name_route }
-           // routes!.push(object)
-            this.$router.addRoute(object)         
-        }
-       // this.$router.addRoutes(routes!)
-        console.log(this.$router.getRoutes())
+        getRoutes(this.getUserRoutes,this.$router)
     }
 
   @users.Getter(UsersMethods.getters.GET_USER_ROUTES)

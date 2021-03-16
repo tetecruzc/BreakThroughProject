@@ -29,6 +29,24 @@ export default class UsersPostgresRepository {
         return queryRes.rows;     
     }
 
+    async getUserRoutes(profileId){
+        logger.debug({
+            message:  '[UsersPostgresRepository] Obteniendo listado de rutas del perfil Id: '+ profileId
+        });
+        const queryRes = await this.dbClient.query(`SELECT id_route,name_route,url_route,icon FROM routes WHERE id_profile = ${profileId}`)
+        if (queryRes === ''){
+            throw new Error();
+        }
+        else {
+            for (var i=0;i<queryRes.rows.length;i++){  
+                if (queryRes.rows[i].url_route === null)  {       
+                var subQuery = await this.dbClient.query(`SELECT name_route,url_route FROM routes WHERE id_route_route = ${queryRes.rows[i].id_route}`)          
+                queryRes.rows[i].submenu = subQuery.rows}
+            }
+        }
+        return queryRes.rows;  
+    }
+
     async getRoles(profileId){
             logger.debug({
                 message:  '[UsersPostgresRepository] Obteniendo listado de roles del perfil Id: '+ profileId

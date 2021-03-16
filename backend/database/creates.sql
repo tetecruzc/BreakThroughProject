@@ -1,9 +1,22 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 SET TIMEZONE = 'America/Caracas';
 
+
+
 CREATE TABLE lnk_profile(
 	id_profile serial NOT NULL unique primary key,
 	name_profile VARCHAR(40) NOT NULL unique
+);
+
+CREATE TABLE routes(
+	id_route serial NOT NULL unique primary key,
+	name_route VARCHAR(20) NOT NULL,
+	url_route VARCHAR(200) ,
+	icon VARCHAR(20),
+	id_profile INTEGER ,
+	id_route_route INTEGER,
+	CONSTRAINT fk_profile FOREIGN KEY(id_profile) REFERENCES lnk_profile(id_profile),
+	CONSTRAINT fk_route FOREIGN KEY(id_route_route) REFERENCES routes(id_route)
 );
 
 CREATE TABLE profile_role(

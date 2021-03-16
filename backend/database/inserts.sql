@@ -7,6 +7,13 @@ values ('Analista-ATC'),
        ('Analista-OPFX 2'),
        ('Analista-Bancario');
 
+insert into routes (name_route,url_route,id_profile,icon)
+values ('Messages','/messages',1,'chat-text-fill'),('Notifications',null,1,'bell-fill'), ('Users','/users',1,'people-fill'),('Messages','/messages',2,'chat-text-fill'),('Notifications',null,2,'bell-fill'),('Users','/users',3,'people-fill');
+
+
+insert into routes (name_route,url_route,id_route_route)
+values ('Sent', '/sent',8),('Sent', '/sent',11),('Received', '/received',8),('Received', '/received',11)
+
 insert into profile_role (name_role, id_profile)
 values ('app_access', 1),
        ('costumer_access_whatsapp', 1),

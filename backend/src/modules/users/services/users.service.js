@@ -26,8 +26,12 @@ export default class UsersUsecase {
             return users;
     }
 
+    async getUserRoutes(profileId){
+       return await this.userRepository.getUserRoutes(profileId);
+    }
+
     async updateUser(userBody,userId){
-      await this.userRepository.updateUser(userBody,userId);
+      return  await this.userRepository.updateUser(userBody,userId);
     }
 
     async getRoles(profileId){

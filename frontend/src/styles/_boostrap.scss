@@ -12,3 +12,34 @@
   .nav-tabs > .nav-item > a{
     color: $color-primary !important;
   }
+
+  .table-header-menu {
+    padding: 5px;
+    border-radius: 50%;
+    display: flex !important;
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent !important;
+    border: none !important;
+    cursor: pointer;
+    transition: all .3s;
+    &__icon{
+      border: solid $color-primary;
+      border-width: 0 2px 2px 0;
+      display: inline-block;
+      padding: 3px;
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+
+
+    }
+    &:focus{
+      box-shadow: none !important;
+    }
+    &:hover{
+      background-color: rgb(243, 243, 243) !important;
+    }
+
+  }
