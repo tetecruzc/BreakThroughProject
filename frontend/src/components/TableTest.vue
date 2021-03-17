@@ -64,10 +64,10 @@ export default class TableTest extends Vue {
             {country: 'Antwerp6', city: 'oiu', trousers: 27, skirts: 48, dresses: 59, bracelets: 28, rings:38,prueba1:22,prueba2:54}]
     currentPage= 1;
     perPage = 2;
-    orderedItems = [];
+    orderedItems : any[] = [];
     mounted(){
         for (var i=0;i<this.items.length;i++){
-            let values = Object.values(this.items[i])
+            let values : any = Object.values(this.items[i])
             this.orderedItems.push(values)
         }
     }
@@ -94,10 +94,11 @@ export default class TableTest extends Vue {
     orderItems(){
         let newItemsOrder : any = []         
         for (var j=0;j<this.items.length;j++){
-            let obj : any = []; 
+            let obj : any[] = []; 
+            let value : any = null
             for (var i=0;i<this.header2.length;i++){
-                let key  = this.header2[i]['key']
-                let value : any = this.items[j][key];
+                let key : any = this.header2[i]['key']
+                value = this.items[j][key];
                 obj[i] = value
             }   
             newItemsOrder[j] = obj

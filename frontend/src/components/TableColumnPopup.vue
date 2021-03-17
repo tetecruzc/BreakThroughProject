@@ -56,7 +56,7 @@ export default class TableColumnPopup extends Vue {
         let headers = header.filter((el: { name: any; }) => el.name !== this.col.name);
         let index = header.findIndex((el: { name: any; }) => el.name === this.col.name)
         let item = header.find((el: { name: any; }) => el.name === this.col.name);
-        let headerSecondary = this.headers2
+        let headerSecondary : any = this.headers2
         if (val === 'left'){
             if (primary && index !==0){
                headerSecondary = this.moveHeaderPrimary(this.col,val); 
@@ -86,12 +86,12 @@ export default class TableColumnPopup extends Vue {
             } 
             else {
                 headerSecondary = this.removeColumn(this.headers2,this.col);
-                let currentHeaderPrimary = this.headers1.find(el => el.children.find(e => e.key === this.col.key))
-                let nextHeader = []
+                let currentHeaderPrimary = this.headers1.find(el => el.children.find((e: { key: any; }) => e.key === this.col.key))
+                let nextHeader : any = []
                 for (var cols in this.headers1){
                     nextHeader[cols] = this.headers1[cols]
                     if (this.headers1[cols] === currentHeaderPrimary){
-                        nextHeader[cols].children = currentHeaderPrimary.children.filter(el => el.key !== this.col.key)
+                        nextHeader[cols].children = currentHeaderPrimary.children.filter((el: { key: any; }) => el.key !== this.col.key)
                     }
                   //  if (nextHeader[cols].children.length === 0) headers = nextHeader.filter(el => el.children.length > 0)
                 }
@@ -104,8 +104,8 @@ export default class TableColumnPopup extends Vue {
 
 
     removeColumn(column: any, col: any){
-        let newHeader = []
-            column.forEach(el =>{
+        let newHeader : any = []
+            column.forEach((el: { key: any; }) =>{
                 if (el.key !== col.key){
                     newHeader.push(el)
                 }
@@ -123,7 +123,7 @@ export default class TableColumnPopup extends Vue {
             }
             let lastIndex : any = undefined;
             for (var i=0;i<this.headers2.length;i++){
-                lastColumn.children.forEach(element => {
+                lastColumn.children.forEach((element: {key: any;}) => {
                     if (element.key === this.headers2[i].key){                  
                         if (lastIndex === undefined || i < lastIndex){
                             lastIndex = i;
@@ -162,7 +162,7 @@ export default class TableColumnPopup extends Vue {
             }
             let lastIndex : any = undefined;
             for (var i=0;i<headerPrimary.length;i++){
-                lastColumn.children.forEach(element => {
+                lastColumn.children.forEach((element: {key: any;}) => {
                     if (element.key === headerPrimary[i].key){                  
                         if (lastIndex === undefined || i < lastIndex){
                             lastIndex = i;
