@@ -54,14 +54,14 @@ import Box from './utilities/Box.vue'
     }
 })
 export default class TableTest extends Vue {
-    header1= [{name:'Region',children:[{key: 'country'}, {key: 'city'}]},{name:'Clothes', children:[{key:'trousers'}, {key:'skirts'}, {key: 'dresses'}]}, {name:'Accesories', children:[{key:'bracelets'}, {key: 'rings'}]}];
-    header2= [{name: 'Country', key: 'country'},{name: 'City',key:'city'},{name: 'Trousers', key:'trousers'},{name: 'Skirts', key:'skirts'},{name: 'Dresses', key:'dresses'},{name: 'Bracelets', key:'bracelets'},{name: 'Rings', key: 'rings'}]
-    items= [{country: 'Antwerp', city: 'Ddsaf', trousers: 22, skirts: 43, dresses: 54, bracelets: 23, rings:33},
-            {country: 'Antwerp2', city: 'ewrew', trousers: 23, skirts: 44, dresses: 55, bracelets: 24, rings:34},
-            {country: 'Antwerp3', city: 'feverg', trousers: 24, skirts: 45, dresses: 56, bracelets: 25, rings:35},
-            {country: 'Antwerp4', city: 'ewtj', trousers: 25, skirts: 46, dresses: 57, bracelets: 26, rings:36},
-            {country: 'Antwerp5', city: 'sdcsg', trousers: 26, skirts: 47, dresses: 58, bracelets: 27, rings:37},
-            {country: 'Antwerp6', city: 'oiu', trousers: 27, skirts: 48, dresses: 59, bracelets: 28, rings:38}]
+    header1= [{name:'Region',key:'region',children:[{key: 'country'}, {key: 'city'}]},{name:'Clothes',key:'clothes', children:[{key:'trousers'}, {key:'skirts'}, {key: 'dresses'}]}, {name:'Accesories',key:'accesories', children:[{key:'bracelets'}, {key: 'rings'}]},{name:'Prueba',key:'prueba', children:[{key:'prueba1'}, {key: 'prueba2'}]}];
+    header2= [{name: 'Country', key: 'country', parent: 'region'},{name: 'City',key:'city', parent: 'region'},{name: 'Trousers', key:'trousers', parent: 'clothes'},{name: 'Skirts', key:'skirts', parent:'clothes'},{name: 'Dresses', key:'dresses', parent: 'clothes'},{name: 'Bracelets', key:'bracelets', parent: 'accesories'},{name: 'Rings', key: 'rings', parent: 'accesories'},{name: 'Prueba1', key: 'prueba1', parent: 'prueba'},{name: 'Prueba2', key: 'prueba2', parent: 'prueba'}]
+    items= [{country: 'Antwerp', city: 'Ddsaf', trousers: 22, skirts: 43, dresses: 54, bracelets: 23, rings:33,prueba1:22,prueba2:54},
+            {country: 'Antwerp2', city: 'ewrew', trousers: 23, skirts: 44, dresses: 55, bracelets: 24, rings:34,prueba1:22,prueba2:54},
+            {country: 'Antwerp3', city: 'feverg', trousers: 24, skirts: 45, dresses: 56, bracelets: 25, rings:35,prueba1:22,prueba2:54},
+            {country: 'Antwerp4', city: 'ewtj', trousers: 25, skirts: 46, dresses: 57, bracelets: 26, rings:36,prueba1:22,prueba2:54},
+            {country: 'Antwerp5', city: 'sdcsg', trousers: 26, skirts: 47, dresses: 58, bracelets: 27, rings:37,prueba1:22,prueba2:54},
+            {country: 'Antwerp6', city: 'oiu', trousers: 27, skirts: 48, dresses: 59, bracelets: 28, rings:38,prueba1:22,prueba2:54}]
     currentPage= 1;
     perPage = 2;
     orderedItems = [];
@@ -85,11 +85,9 @@ export default class TableTest extends Vue {
 
     changeHeader1(newVal : any){ // cambiar tipo
         this.header1 = newVal;
-        console.log(this.header1)
     }
     changeHeader2(newVal : any){ // cambiar tipo
         this.header2 = newVal;
-        console.log(this.header2)
         this.orderItems();
     }
 
