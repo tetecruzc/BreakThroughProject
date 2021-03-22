@@ -12,21 +12,23 @@
                 </Box>
             </b-col>
         </b-row>
+        <b-button class="button-primary my-3 ml-auto" @click="openModal()">Add column</b-button>
+        <AddColumnPopup title="Añadir columnas" :showModal="showAddColumnModal" :currentChildren="itemsWithoutParent" :col="parentNull" @changeModalStatus="changeModalStatus" :primaryHeader="header1" :secondaryHeader="header2" @changeHeader2="changeHeader2" @changeHeader1="changeHeader1"/>
         <b-table-simple responsive bordered>
             <b-thead>
                 <b-tr>
-                    <b-th v-for="(header,i) in header1" :key="i" :colspan="header.children.length">
+                    <b-th v-for="(header,i) in primaryHeader" :key="i" :colspan="header.children.length">
                         <b-row>
                             <p style="margin:0;">{{header.name}}</p>
-                            <TableColumnPopup :id="'table-popover-1'+i" :items="orderedItems" :headers1="header1" :headers2="header2" :col="header" :primaryHeader="true" @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" /> 
+                            <TableColumnPopup :id="'table-popover-1'+i" :items="orderedItems" :headers1="primaryHeader" :headers2="secondaryHeader" :allHeaderSecondary="header2" :col="header"  @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" /> 
                         </b-row>
                     </b-th>
                 </b-tr>
                 <b-tr>
-                    <b-th v-for="(header,i) in header2" :key="i">
+                    <b-th v-for="(header,i) in secondaryHeader" :key="i">
                         <b-row>
                             <p>{{header.name}}</p>
-                            <TableColumnPopup :id="'table-popover-2'+i" :items="orderedItems" :headers1="header1" :headers2="header2" :col="header" @changeHeader2="changeHeader2" />
+                            <TableColumnPopup :id="'table-popover-2'+i" :items="orderedItems" :headers1="primaryHeader" :headers2="secondaryHeader" :col="header" @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" />
                         </b-row>
                     </b-th>
                 </b-tr>
@@ -47,15 +49,34 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import TableColumnPopup from './TableColumnPopup.vue'
 import Box from './utilities/Box.vue'
+import AddColumnPopup from './AddColumnPopup.vue';
+
 @Component({
     components:{
         TableColumnPopup,
+        AddColumnPopup,
         Box
     }
 })
 export default class TableTest extends Vue {
-    header1= [{name:'Region',key:'region',children:[{key: 'country'}, {key: 'city'}]},{name:'Clothes',key:'clothes', children:[{key:'trousers'}, {key:'skirts'}, {key: 'dresses'}]}, {name:'Accesories',key:'accesories', children:[{key:'bracelets'}, {key: 'rings'}]},{name:'Prueba',key:'prueba', children:[{key:'prueba1'}, {key: 'prueba2'}]}];
-    header2= [{name: 'Country', key: 'country', parent: 'region'},{name: 'City',key:'city', parent: 'region'},{name: 'Trousers', key:'trousers', parent: 'clothes'},{name: 'Skirts', key:'skirts', parent:'clothes'},{name: 'Dresses', key:'dresses', parent: 'clothes'},{name: 'Bracelets', key:'bracelets', parent: 'accesories'},{name: 'Rings', key: 'rings', parent: 'accesories'},{name: 'Prueba1', key: 'prueba1', parent: 'prueba'},{name: 'Prueba2', key: 'prueba2', parent: 'prueba'}]
+    header1= [{name:'Region',key:'region',children:[{key: 'country'},{key: 'city'}], shown: true},
+            {name:'Clothes',key:'clothes', children:[{key:'trousers'}, {key:'skirts'}, {key: 'dresses'}], shown: true},
+            {name:'Accesories',key:'accesories', children:[{key:'bracelets'}, {key: 'rings'}], shown: true},
+            {name:'Categoria1',key:'prueba', children:[{key:'prueba1'}], shown: true},
+            {name:'Categoria2',key:'categoria', shown: false},
+            {name: 'Otras columnas', key:null, shown: false}];
+    header2= [{name: 'Country', key: 'country', parent: 'region', shown: true},
+            {name: 'City',key:'city', parent: 'region', shown: true},
+            {name: 'Trousers', key:'trousers', parent: 'clothes', shown: true},
+            {name: 'Skirts', key:'skirts', parent:'clothes', shown: true},
+            {name: 'Dresses', key:'dresses', parent: 'clothes', shown: true},
+            {name: 'Bracelets', key:'bracelets', parent: 'accesories', shown: true},
+            {name: 'Rings', key: 'rings', parent: 'accesories', shown: true},
+            {name: 'Prueba1', key: 'prueba1', parent: 'prueba', shown: true},
+            {name: 'Prueba2', key: 'prueba2', parent: 'prueba', shown: false},
+            {name: 'Primerhijo', key: 'firstchild', parent: 'ctagoria', shown: false},
+            {name: 'Segundohijo', key: 'secondchild', parent: 'ctagoria', shown: false},
+            {name: 'Sin padre 1', key: 'sinpadre1', parent: null, shown: false}]
     items= [{country: 'Antwerp', city: 'Ddsaf', trousers: 22, skirts: 43, dresses: 54, bracelets: 23, rings:33,prueba1:22,prueba2:54},
             {country: 'Antwerp2', city: 'ewrew', trousers: 23, skirts: 44, dresses: 55, bracelets: 24, rings:34,prueba1:22,prueba2:54},
             {country: 'Antwerp3', city: 'feverg', trousers: 24, skirts: 45, dresses: 56, bracelets: 25, rings:35,prueba1:22,prueba2:54},
@@ -65,11 +86,19 @@ export default class TableTest extends Vue {
     currentPage= 1;
     perPage = 2;
     orderedItems : any[] = [];
+    secondaryHeader : any[] = [];
+    primaryHeader : any[] = [];
+    showAddColumnModal: boolean = false;
+
     mounted(){
-        for (var i=0;i<this.items.length;i++){
-            let values : any = Object.values(this.items[i])
-            this.orderedItems.push(values)
-        }
+        this.secondaryHeader = this.header2.filter(el => el.shown === true)
+        this.primaryHeader = this.header1.filter(el => el.shown === true)
+        this.orderItems();
+    }
+
+
+    openModal(){
+        this.showAddColumnModal = true
     }
 
     get getItemsPerPage(): any {
@@ -83,12 +112,18 @@ export default class TableTest extends Vue {
             this.currentPage = val;
     }
 
-    changeHeader1(newVal : any){ // cambiar tipo
-        this.header1 = newVal;
+    changeHeader1(newVal : any){ 
+        this.primaryHeader = newVal.filter((el: { shown: boolean; }) => el.shown === true);
     }
-    changeHeader2(newVal : any){ // cambiar tipo
-        this.header2 = newVal;
+    
+    changeHeader2(newVal : any){ 
+        this.secondaryHeader = newVal.filter((el: { shown: boolean; }) => el.shown === true);
         this.orderItems();
+        this.header2.forEach(el => {
+            let found = this.secondaryHeader.find(ele => ele.key === el.key);
+            if (found) el.shown = true;
+            else el.shown = false
+        })
     }
 
     orderItems(){
@@ -96,8 +131,8 @@ export default class TableTest extends Vue {
         for (var j=0;j<this.items.length;j++){
             let obj : any[] = []; 
             let value : any = null
-            for (var i=0;i<this.header2.length;i++){
-                let key : any = this.header2[i]['key']
+            for (var i=0;i<this.secondaryHeader.length;i++){
+                let key : any = this.secondaryHeader[i]['key']
                 value = this.items[j][key];
                 obj[i] = value
             }   
@@ -105,6 +140,24 @@ export default class TableTest extends Vue {
         }
         this.orderedItems = newItemsOrder
     }
+        // creo que seria mas facil para orderitems
+            // for (var i=0;i<this.items.length;i++){
+        //     let values : any = Object.values(this.items[i]);
+        //     console.log(values)
+        //     this.orderedItems.push(values)
+        // }
+    get itemsWithoutParent() : Array<any>{
+        return this.header2.filter(el => el.parent === null)
+    }
+
+    get parentNull(): any {
+        return this.header1.find(el => el.key === null)
+    }
+
+    changeModalStatus(newVal: boolean){
+        this.showAddColumnModal = newVal;
+    }
+
 }
 </script>
 

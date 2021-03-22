@@ -1,9 +1,72 @@
-.filter-card{
-    min-height: 200px;
+.card{
     border: none !important;
 }
 .card-header{
-    background-color: $color-primary !important;
-    color: #fff;
-    border-color: $color-primary !important;
+    background-color: #fff !important;
+}
+/*
+.vertical-tabs{
+
+    .col-auto{
+        border-right: 1px solid $color-terciary-dark;
+        .nav{
+            padding: 0 !important;
+        }
+    }
+
+    .nav-link{
+        color: $color-primary !important;
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+
+        p{
+            margin: 0 !important;
+        }
+
+        &.active{
+            background-color: $color-terciary !important;
+            
+        }
+    }
+}
+*/
+.vertical-tabs{
+
+    &>*{
+        height: 200px;
+        overflow-y: scroll;
+    }
+    &__tabs{
+        border-right: 1px solid $color-terciary-dark;
+
+        .tabs{
+            color: $color-primary !important;
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all .3s;
+            p{
+                margin: 0 !important;
+            }
+    
+            &.active, &:hover{
+                background-color: $color-terciary !important;
+                
+            }
+        }
+    }
+}
+
+
+.filter-card{
+    min-height: 200px;
+    border: none !important;
+
+    .card-header{
+        background-color: $color-primary !important;
+        color: #fff;
+        border-color: $color-primary !important;
+    }
 }

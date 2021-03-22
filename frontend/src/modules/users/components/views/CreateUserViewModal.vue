@@ -10,14 +10,8 @@
                     </div>
                 </div>
                 <b-row>
-                    <b-col >
-                           <b-form-checkbox  v-for="(field,i) in getLabelsLenght(0)" :key="i" v-model="field.selected">{{field.label}}</b-form-checkbox>
-                    </b-col>
-                    <b-col>
-                           <b-form-checkbox  v-for="(field,i) in getLabelsLenght(1)" :key="i" v-model="field.selected">{{field.label}}</b-form-checkbox>
-                    </b-col>
-                    <b-col>
-                           <b-form-checkbox  v-for="(field,i) in getLabelsLenght(2)" :key="i" v-model="field.selected">{{field.label}}</b-form-checkbox>
+                    <b-col v-for="(item,j) in 3" :key="j">
+                           <b-form-checkbox  v-for="(field,i) in getLabelsLenght(j)" :key="i" v-model="field.selected">{{field.label}}</b-form-checkbox>
                     </b-col>
                 </b-row>             
                 <b-button class="button-primary mt-5" block @click="createView()">Crear vista</b-button>
