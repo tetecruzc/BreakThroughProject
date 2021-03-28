@@ -1,24 +1,29 @@
 <template>
   <b-modal centered v-model="show" hide-footer>
-            <template #modal-title>
-                {{title}} {{col.name}}
+            <template #modal-title style="display: flex;">
+                <p v-if="!col">{{title}}</p> 
+                <p v-else >{{title}} {{col.name}}</p>
             </template>
             <b-card no-body>
                 <b-row class="vertical-tabs">
                     <b-col class="vertical-tabs__tabs pa-0">
-                        <b-row  v-for="(tab,i) in primaryHeaderLocal" :key="i" :class="isCurrentTab(tab) === true ? 'tabs p-2 active' : 'tabs p-2'" @click="changeCurrentTab(tab)">
-                            <p>{{tab.name}}</p>
+                        <b-row  v-if="col"  class="tabs p-2 active" >
+                            <p>{{col.name}}</p>
                             <b-icon icon="chevron-right" class="icon-dark icon-small mr-2" ></b-icon>
                         </b-row>
+                        <b-row v-else  v-for="(tab,i) in primaryHeaderLocal" :key="i" :class="isCurrentTab(tab) === true ? 'tabs p-2 active' : 'tabs p-2'" @click="changeCurrentTab(tab)">
+                            <p>{{tab.name === null ? 'Otras columnas' : tab.name}}</p>
+                            <b-icon icon="chevron-right" class="icon-dark icon-small mr-2" ></b-icon>
+                        </b-row>          
                     </b-col>
                     <b-col class="vertical-tabs__content pa-0">
-                        <b-row v-for="(content,j) in categoryChildren" :key="j">
+                        <b-row v-for="(content,j) in currentChildren" :key="j">
                             <b-form-checkbox class="my-2" v-model="content.shown">{{content.name}}</b-form-checkbox>
                         </b-row>
                     </b-col>
                 </b-row>
             </b-card>
-            <b-button class="button-primary mt-5" block @click="saveView()">Guardar Vista</b-button>
+            <b-button class="button-primary mt-5" block @click="saveView()">Guardar Columnas</b-button>
   </b-modal>  
 </template>
 
@@ -28,24 +33,30 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 @Component({})
 export default class AddColumnPopup extends Vue {
     @Prop() title?: string; 
-    @Prop() currentChildren!: Array<any>; 
     @Prop() primaryHeader!: Array<any>;
     @Prop() secondaryHeader!: Array<any>;
-    @Prop() col: any;
     @Prop() showModal!: boolean;
+    @Prop() col? : any;
     show: boolean = false;
     currentTab: any = {}
     primaryHeaderLocal : Array<any> = []
     secondaryHeaderLocal : Array<any> = []
+    currentChildren: Array<any> =[]
 
     mounted(){
        this.primaryHeaderLocal = this.primaryHeader;
-       this.secondaryHeaderLocal = this.secondaryHeader;
+       this.secondaryHeaderLocal = this.secondaryHeader;  
+       if (this.primaryHeader) this.currentTab = this.primaryHeader[0]!
+       if (this.col) this.currentTab = this.col
+        this.currentChildren = this.categoryChildren;   
     }
 
     @Watch('showModal')
     renderModal(){
-        this.show = this.showModal
+        this.primaryHeaderLocal = this.primaryHeader;
+        if (this.col) this.currentTab = this.col 
+        this.currentChildren = this.categoryChildren;
+        this.show = this.showModal;
     }
     @Watch('show')
     sendToParent(newVal: boolean){
@@ -60,9 +71,9 @@ export default class AddColumnPopup extends Vue {
         return children
     }
 
-
     changeCurrentTab(tab: any){
         this.currentTab = tab;
+        this.currentChildren = this.categoryChildren
     }
 
     isCurrentTab(tab: any): boolean{
@@ -86,8 +97,12 @@ export default class AddColumnPopup extends Vue {
              this.primaryHeaderLocal[i].shown = false
           }
       }
+      if (!this.col){
       this.$emit('changeHeader1',this.primaryHeaderLocal)
-      this.$emit('changeHeader2',this.secondaryHeaderLocal)
+      this.$emit('changeHeader2',this.secondaryHeaderLocal)}
+      else{
+          this.$emit('changeHeaders',this.secondaryHeaderLocal,this.primaryHeaderLocal)
+      }
   }
 
 }

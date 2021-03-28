@@ -1,5 +1,21 @@
-.col-10, .row{
+  p{
     margin: 0 !important;
+    padding: 0 !important;
+  }
+  .col-10, .row{
+    margin: 0 !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .b-form-tags{
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  .badge-info{
+    background-color: $color-primary !important; 
   }
 
   .profile-avatar{
@@ -12,6 +28,17 @@
   .nav-tabs > .nav-item > a{
     color: $color-primary !important;
   }
+
+.table{
+  thead{
+      tr{
+        th{
+          padding-top: 10px !important;
+          min-width: 200px !important;
+        }
+      }
+  }
+}
 
   .table-header-menu {
     padding: 5px;

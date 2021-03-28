@@ -20,6 +20,16 @@ export let routes: Array<RouteConfig> = [
     component: () => import('../views/Users.vue')
   },
   {
+    path: '/table-test',
+    name: 'TableTest',
+    component: () => import('../views/TableViewExample.vue')
+  },
+  {
+    path: '/requests',
+    name: 'Requests',
+    component: () => import('../views/Requests.vue')
+  },
+  {
     path: '/sent',
     name: 'Sent',
     component: () => import('../views/Sent.vue')

@@ -96,6 +96,15 @@ const users: Module<UsersStateInterface, any> = {
                 return false;
             }
         },
+        async [UsersTypes.actions.SAVE_VIEW]({ commit }, id : string): Promise<boolean> {
+            try {
+                //const response : Route = await usersRepository.getUserActivitiesSubRoutes(id); 
+                //commit(UsersTypes.mutations.SET_ACTIVITIES_USER_SUBROUTES,response);
+                return false;
+            } catch (e) {
+                return false;
+            }
+        },
     }
 
 }

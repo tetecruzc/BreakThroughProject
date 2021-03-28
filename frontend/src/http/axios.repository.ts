@@ -10,7 +10,7 @@ export abstract class AxiosRepository implements RepositoryInterface {
         this.URL = EnvironmentConstants.HOST;
     } 
 
-    public async getAll(resource : string): Promise<any> {
+    public async getAll(resource? : string): Promise<any> {
         return (await axios.get(this.URL + resource)).data;
     }
 

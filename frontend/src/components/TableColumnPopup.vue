@@ -23,7 +23,7 @@
                     </b-list-group-item>
             </b-list-group>
         </b-popover>
-        <AddColumnPopup title="Editar columna" :showModal="showAddColumnModal" :currentChildren="currentChildren" :col="col" @saveView="saveView" @changeModalStatus="changeModalStatus"/>
+        <AddColumnPopup title="Editar columna" :col="col"  :primaryHeader="headers1" :secondaryHeader="headers2" :showModal="showAddColumnModal"  @saveView="saveView" @changeModalStatus="changeModalStatus" @changeHeaders="sendHeadersToParent"/>
     </div>
 </template>
 
@@ -114,38 +114,11 @@ export default class TableColumnPopup extends Vue {
         }
         else if (val === 'add'){
             this.showAddColumnModal = true;
-            this.currentChildren = this.allHeaderSecondary!.filter(el => el.parent === this.col.key);
-            this.setSelectedChilds();
         }
     }
 
 
-    saveView(currentChildren: any){
-        let newChildrens : any = []
-        let primaryHeader = this.headers1;
-        let deletedChildrens: any = []
-        currentChildren.forEach((el: { selected: boolean; }) =>{ // busco los elementos seleccionados y agrego a sus respectivos arreglos
-            if (el.selected === true) {
-                delete el.selected
-                newChildrens.push(el)
-            }
-            else{
-                delete el.selected
-                deletedChildrens.push(el)
-            }
-        })
-        primaryHeader = this.addChildrenToParent(primaryHeader,newChildrens)
-        let secondaryHeader = this.headers2;
-        deletedChildrens.forEach((el: any) =>{ // elimino  del header 2 
-            secondaryHeader = this.removeColumn(secondaryHeader,el)
-        })
-        newChildrens.forEach((el: any) =>{ // agrego al header 2
-            let found = secondaryHeader.find(ele => ele === el)
-            if (found === undefined) secondaryHeader = this.addColumnToParent(secondaryHeader,this.col,el);
-        })
-        if (this.col.children.length === 0) {
-                primaryHeader = this.removeColumn(primaryHeader,this.col)
-        }
+    saveView(secondaryHeader: Array<any>, primaryHeader: Array<any>){
         this.sendHeadersToParent(secondaryHeader, primaryHeader)
     }
 
