@@ -26,7 +26,7 @@ const requests: Module<RequestsStateInterface, any> = {
     mutations:{
         [RequestsTypes.mutations.SET_REQUESTS](state, requests: Table): void {
             state.tableRequests.headerPrimary = requests.headerPrimary
-            state.tableRequests.headerSecondary = requests.headerSeconday
+            state.tableRequests.headerSecondary = requests.headerSecondary
             state.tableRequests.items = requests.items
         },
         [RequestsTypes.mutations.SET_TOTAL_REQUESTS](state, total_requests: number): void {
@@ -36,10 +36,10 @@ const requests: Module<RequestsStateInterface, any> = {
     actions:{
         async [RequestsTypes.actions.FETCH_ALL_REQUESTS]({ commit }): Promise<boolean> {
             try {
-                const requests: Array<any> = await requestsRepository.getRequests(); 
-                console.log(requests);
-                commit(RequestsTypes.mutations.SET_REQUESTS, requests);
-                commit(RequestsTypes.mutations.SET_TOTAL_REQUESTS, requests.length);         
+                
+                const requests: any = await requestsRepository.getRequests(); 
+              commit(RequestsTypes.mutations.SET_REQUESTS, requests);
+              commit(RequestsTypes.mutations.SET_TOTAL_REQUESTS, requests.items.length);         
                 return true;
             } catch (e) {
                 return false;

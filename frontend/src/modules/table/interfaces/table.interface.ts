@@ -1,6 +1,6 @@
 export interface Table{
     headerPrimary: Array<any>,
-    headerSeconday: Array<any>,
+    headerSecondary: Array<any>,
     items: Array<any>
 }
 

@@ -104,7 +104,7 @@ const users: Module<UsersStateInterface, any> = {
             } catch (e) {
                 return false;
             }
-        },
+        }
     }
 
 }

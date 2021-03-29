@@ -37,5 +37,4 @@ export abstract class AxiosRepository implements RepositoryInterface {
     public createAuthenticationHeader(data: string): {} {
         return {};
     }
-
 }

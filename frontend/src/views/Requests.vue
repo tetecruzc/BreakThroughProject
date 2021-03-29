@@ -1,4 +1,4 @@
-<template>
+<template >
   <div class="home">
     <b-row class="my-4 " align-h="around">
             <b-col >
@@ -47,7 +47,7 @@
                 </Box>
             </b-col>
         </b-row> 
-    <TableTest :addColumnButton="true" :header1="header1" :header2="header2" :items="items" :perPage="perPage" :currentFilter="currentFilter" :currentOrderFilter="currentOrderFilter" :textFilter="textFilter" @sendHeaders="getHeaderFilters"/>
+    <TableTest :addColumnButton="true" :header1="getHeaderPrimary" :header2="getHeaderSeconday" :items="getItems" :perPage="perPage" :currentFilter="currentFilter" :currentOrderFilter="currentOrderFilter" :textFilter="textFilter" @sendHeaders="getHeaderFilters"/>
   </div>
 </template>
 
@@ -57,10 +57,8 @@ import UsersTable from '../modules/users/components/UsersTable.vue'; // @ is an 
 import TableTest from '../components/TableTest.vue'
 import Box from '../components/utilities/Box.vue'
 import FormTag from '../components/utilities/FormTag.vue'
-import {requests} from '../store/namespaces';
+import {requests} from '../store/namespaces'
 import RequestsMethods from '../store/requests/methods/requests.methods';
-import ProfilesMethods from '../store/profiles/methods/profiles.methods';
-import { User } from '../modules/users/interfaces/users.interface';
 @Component({
   components: {
     UsersTable,
@@ -73,7 +71,7 @@ export default class TableViewExample extends Vue {
     perPage : number = 3;
     textFilter : string = ''
     currentFilter : any = {}
-        views =[
+    views =[
         {name: 'Vista 1'},
         {name: 'Vista 2'}
     ]
@@ -81,8 +79,10 @@ export default class TableViewExample extends Vue {
     currentView : any = this.views[0]
     headerFilters: Array<any> = []
 
-    mounted(){
-        this.fetchRequests();
+
+
+    async created(){
+       await this.fetchRequests();
         if (this.headerFilters){ 
             this.currentFilter = this.headerFilters[0]
         }
@@ -103,18 +103,22 @@ export default class TableViewExample extends Vue {
     getHeaderFilters(newVal: any){
         this.headerFilters = newVal;
     }
-/*
-    changeOrderFilter(header: any){
-        this.currentOrderFilter = header;
-    }
+    /*
+        changeOrderFilter(header: any){
+            this.currentOrderFilter = header;
+        }
     */
     setOrderFilters(newVal: any){
        this.currentOrderFilter = newVal;
     }
     @requests.Action(RequestsMethods.actions.FETCH_ALL_REQUESTS)
     fetchRequests!: () => boolean; 
-    @requests.Getter(RequestsMethods.getters.GET_ALL_REQUESTS)
-    getRequests!: () => boolean; 
+    @requests.Getter(RequestsMethods.getters.GET_HEADER_PRIMARY)
+     getHeaderPrimary!: Array<any>;    
+    @requests.Getter(RequestsMethods.getters.GET_HEADER_SECONDARY)
+     getHeaderSeconday!: Array<any>; 
+    @requests.Getter(RequestsMethods.getters.GET_ITEMS)
+     getItems!: Array<any>; 
 }
 
 </script>

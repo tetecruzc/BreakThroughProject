@@ -10,8 +10,8 @@ export class RequestsRepository extends AxiosRepository {
         super(RESOURCE);
     } 
 
-    public async getRequests(): Promise<Array<any>> {
-        return super.getAll();
+    public async getRequests(): Promise<any> {
+        return super.getAll(RESOURCE);
     }
 
 }
