@@ -4,6 +4,9 @@
             <b-button class="button-primary my-3 ml-auto" @click="openModal()">Add column</b-button>
             <AddColumnPopup title="Añadir columnas" :showModal="showAddColumnModal" :currentChildren="itemsWithoutParent"  @changeModalStatus="changeModalStatus" :primaryHeader="header1" :secondaryHeader="header2" @changeHeader2="changeHeader2" @changeHeader1="changeHeader1"/>
         </b-row>
+        <b-row v-if="isDataLoading" class="mb-auto">
+                <b-spinner class="my-4"></b-spinner>
+        </b-row>
         <b-table-simple responsive bordered>
             <b-thead>
                 <b-tr>
@@ -29,7 +32,7 @@
                 </b-tr>
             </b-tbody>
         </b-table-simple>
-        <div class="justify-content-center row my-2">
+        <div v-if="!isDataLoading" class="justify-content-center row mb-2 mt-auto">
             <b-pagination size="md" :total-rows="this.orderedItems.length" :per-page="perPageLocal" v-model="currentPage" />
         </div>
     </b-container>
@@ -74,11 +77,17 @@ export default class TableTest extends Vue {
         this.$emit('sendHeaders',this.secondaryHeader)
     }
 
-    get shownSecondaryHeader() : Array<any>{
+
+    get isDataLoading(): boolean{
+        if (this.secondaryHeader.length > 0) return false; 
+        else return true
+    }
+
+    get shownSecondaryHeader() : Array<any>{ 
         if (this.secondaryHeader.length === 0){
             this.secondaryHeader = this.header2.filter(el => el.shown === true)
             this.filteredItems = this.items;
-        }
+        }    
         return this.secondaryHeader
     }
 
