@@ -38,8 +38,9 @@ const requests: Module<RequestsStateInterface, any> = {
             try {
                 
                 const requests: any = await requestsRepository.getRequests(); 
-              commit(RequestsTypes.mutations.SET_REQUESTS, requests);
-              commit(RequestsTypes.mutations.SET_TOTAL_REQUESTS, requests.items.length);         
+                console.log(requests)
+                commit(RequestsTypes.mutations.SET_REQUESTS, requests);
+              //commit(RequestsTypes.mutations.SET_TOTAL_REQUESTS, requests.items.length);         
                 return true;
             } catch (e) {
                 return false;

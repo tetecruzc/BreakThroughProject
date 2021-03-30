@@ -7,7 +7,7 @@
         <b-table-simple responsive bordered>
             <b-thead>
                 <b-tr>
-                    <b-th v-for="(header,i) in primaryHeader" :key="i" :colspan="header.children.length" :sticky-column="header.sticky === true ? true : false">
+                    <b-th v-for="(header,i) in shownPrimaryHeader" :key="i" :colspan="header.children.length" :sticky-column="header.sticky === true ? true : false">
                         <b-row>
                             <p style="margin:0;">{{header.name}}</p>
                             <TableColumnPopup :id="'table-popover-1'+i" :items="orderedItems" :headers1="primaryHeader" :headers2="secondaryHeader" :allHeaderSecondary="header2" :col="header"  @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" /> 
@@ -15,7 +15,7 @@
                     </b-th>
                 </b-tr>
                 <b-tr>
-                    <b-th v-for="(header,i) in secondaryHeader" :key="i" :sticky-column="isStickyColumnChild(header)">
+                    <b-th v-for="(header,i) in shownSecondaryHeader" :key="i" :sticky-column="isStickyColumnChild(header)">
                         <b-row>
                             <p>{{header.name}}</p>
                             <TableColumnPopup :id="'table-popover-2'+i" :items="orderedItems" :headers1="primaryHeader" :headers2="secondaryHeader" :col="header" @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" />
@@ -24,13 +24,13 @@
                 </b-tr>
             </b-thead>
             <b-tbody>
-                <b-tr v-for="(item,i) in getItemsPerPage" :key="i">
+                <b-tr v-for="(item,i) in getItemsPerPage" :key="i"> <!--getItemsPerPage-->
                     <b-td v-for="(it,j) in item" :key="j">{{it}}</b-td>
                 </b-tr>
             </b-tbody>
         </b-table-simple>
         <div class="justify-content-center row my-2">
-            <b-pagination size="md" :total-rows="this.orderedItems.length" :per-page="perPage" v-model="currentPage" />
+            <b-pagination size="md" :total-rows="this.orderedItems.length" :per-page="perPageLocal" v-model="currentPage" />
         </div>
     </b-container>
 </template>
@@ -52,7 +52,8 @@ export default class TableTest extends Vue {
     @Prop() header1!: Array<any>;
     @Prop() header2!: Array<any>;
     @Prop() items!: Array<any>;
-    @Prop() perPage: number = 2;
+    @Prop() perPage!: number;
+    perPageLocal : number = 2;
     @Prop() textFilter: string = '';
     @Prop() currentFilter? : any;
     @Prop() currentOrderFilter?: any;
@@ -65,11 +66,26 @@ export default class TableTest extends Vue {
     showAddColumnModal: boolean = false;
 
     mounted(){
-        this.secondaryHeader = this.header2.filter(el => el.shown === true)
-        this.primaryHeader = this.header1.filter(el => el.shown === true)
-        this.filteredItems = this.items;
+       // this.secondaryHeader = this.header2.filter(el => el.shown === true)
+       // this.primaryHeader = this.header1.filter(el => el.shown === true)
+       // this.filteredItems = this.items;
         this.orderItems();
+        if (this.perPage) this.perPageLocal = this.perPage;
         this.$emit('sendHeaders',this.secondaryHeader)
+    }
+
+    get shownSecondaryHeader() : Array<any>{
+        if (this.secondaryHeader.length === 0){
+            this.secondaryHeader = this.header2.filter(el => el.shown === true)
+            this.filteredItems = this.items;
+        }
+        return this.secondaryHeader
+    }
+
+    get shownPrimaryHeader() : Array<any>{
+        if (this.primaryHeader.length === 0)
+        this.primaryHeader = this.header1.filter(el => el.shown === true)
+        return this.primaryHeader
     }
 
     @Watch('secondaryHeader')
@@ -107,8 +123,9 @@ export default class TableTest extends Vue {
 
 /* PAGINATION */
     get getItemsPerPage(): any {
-        let start = this.currentPage === 1 ? 0 : this.currentPage * this.perPage - this.perPage;
-        let end = start + this.perPage;
+        if (this.orderedItems.length === 0) this.orderedItems = this.items
+        let start = this.currentPage === 1 ? 0 : this.currentPage * this.perPageLocal - this.perPageLocal;
+        let end = start + this.perPageLocal;
         return this.orderedItems.slice(start,end)
     }
 

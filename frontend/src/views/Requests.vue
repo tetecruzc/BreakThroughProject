@@ -32,8 +32,8 @@
                                             <b-dropdown-item  href="#" v-for="(header,i) in headerFilters" :key="i" @click="changeOrderFilter(header)">{{header.name}}</b-dropdown-item>
                                         </b-dropdown>
                                     </div>
-                                -->
-                                 <FormTag :options="headerFilters" @setTags="setOrderFilters"/>
+                                
+                                 <FormTag :options="headerFilters" @setTags="setOrderFilters"/> -->
                             </b-col>
                             <b-col>
                                     <div class="form-group">
@@ -68,7 +68,7 @@ import RequestsMethods from '../store/requests/methods/requests.methods';
   },
 })
 export default class TableViewExample extends Vue {
-    perPage : number = 3;
+    perPage : number = 10;
     textFilter : string = ''
     currentFilter : any = {}
     views =[
