@@ -30,11 +30,12 @@
   }
 
 .table{
+  font-size: 12px !important;
   thead{
       tr{
         th{
           padding-top: 10px !important;
-          min-width: 200px !important;
+          min-width: 100px !important;
         }
       }
   }
