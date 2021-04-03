@@ -5,7 +5,7 @@
                 <Box title="Filtros">
                         <b-row>
                             <b-col class="d-flex flex-column justify-content-start align-self-stretch">
-                                <p class="label">Rows per Page:</p>
+                                <p class="label">Registros por página:</p>
                                 <div class="form-group">
                                     <b-dropdown :text="perPage.toString()" variant="outline" >
                                     <b-dropdown-item  href="#" v-for="(quantity,i) in [20,50,100]" :key="i" @click="perPage = quantity">{{quantity}}</b-dropdown-item>
@@ -13,7 +13,7 @@
                                 </div>
                             </b-col>
                             <b-col class="d-flex flex-column justify-content-start align-self-stretch">
-                                    <p class="label">Filter by name:</p>
+                                    <p class="label">Filtrar por nombre:</p>
                                     <div class="form-group">
                                         <b-dropdown :text="currentFilter.name" variant="outline" id="dropdown-left">
                                         <b-dropdown-item  href="#" v-for="(header,i) in headerFilters" :key="i" @click="changeFilter(header)">{{header.name}}</b-dropdown-item>
@@ -28,11 +28,11 @@
                                     </div>
                             </b-col>
                             <b-col class="d-flex flex-column justify-content-start align-self-stretch">
-                                 <p class="label">Order by field:</p>
+                                 <p class="label">Ordenar por columnas:</p>
                                  <FormTag :options="headerFilters" @setTags="setOrderFilters"/> 
                             </b-col>
                             <b-col class="d-flex flex-column justify-content-start align-self-stretch">
-                                    <p class="label">Your views:</p>
+                                    <p class="label">Mis vistas:</p>
                                     <div class="form-group">
                                         <b-dropdown :text="currentView.name" variant="outline" >
                                             <b-dropdown-item  href="#" v-for="(view,i) in views" :key="i" @click="changeView(view)">{{view.name}}</b-dropdown-item>
