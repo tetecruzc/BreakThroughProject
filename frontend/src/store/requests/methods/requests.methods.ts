@@ -7,6 +7,7 @@ export default {
         GET_HEADER_PRIMARY: 'GET_HEADER_PRIMARY',
         GET_HEADER_SECONDARY: 'GET_HEADER_SECONDARY',
         GET_ITEMS: 'GET_ITEMS',
+        GET_STANDARTS: 'GET_STANDARTS',
         GET_TOTAL_REQUESTS: 'GET_TOTAL_REQUESTS',
     },
     actions: {

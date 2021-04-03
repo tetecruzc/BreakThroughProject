@@ -1,17 +1,18 @@
-.side-bar{
-     padding: 0 !important;
-     @include respond (tab-land){width: max-content !important;} 
+.b-sidebar{
+  width: 270px !important;
 }
 
   .link{
     border-left: 4px solid transparent;
     color: $color-primary;
+    margin-left: 0 !important;
     cursor: pointer;
       .badge{
           font-size: 12px;
           background-color: $color-primary;
           color: #fff;
           margin-left: auto;
+          padding: 5px 6.5px !important;
       }
   }
 

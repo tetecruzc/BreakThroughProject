@@ -1,19 +1,21 @@
 <template >
   <div class="home">
     <b-row class="my-4 " align-h="around">
-            <b-col >
+            <b-col>
                 <Box title="Filtros">
                         <b-row>
-                            <b-col>
+                            <b-col class="d-flex flex-column justify-content-start align-self-stretch">
+                                <p class="label">Rows per Page:</p>
                                 <div class="form-group">
                                     <b-dropdown :text="perPage.toString()" variant="outline" >
-                                    <b-dropdown-item  href="#" v-for="(quantity,i) in [2,3,4]" :key="i" @click="perPage = quantity">{{quantity}}</b-dropdown-item>
+                                    <b-dropdown-item  href="#" v-for="(quantity,i) in [20,50,100]" :key="i" @click="perPage = quantity">{{quantity}}</b-dropdown-item>
                                     </b-dropdown>
                                 </div>
                             </b-col>
-                            <b-col>
+                            <b-col class="d-flex flex-column justify-content-start align-self-stretch">
+                                    <p class="label">Filter by name:</p>
                                     <div class="form-group">
-                                        <b-dropdown :text="currentFilter.name" variant="outline" >
+                                        <b-dropdown :text="currentFilter.name" variant="outline" id="dropdown-left">
                                         <b-dropdown-item  href="#" v-for="(header,i) in headerFilters" :key="i" @click="changeFilter(header)">{{header.name}}</b-dropdown-item>
                                         </b-dropdown>
                                     </div>
@@ -25,17 +27,12 @@
                                         </div>
                                     </div>
                             </b-col>
-                            <b-col>
-                                <!--
-                                    <div class="form-group">
-                                        <b-dropdown :text="currentOrderFilter.name" variant="outline" >
-                                            <b-dropdown-item  href="#" v-for="(header,i) in headerFilters" :key="i" @click="changeOrderFilter(header)">{{header.name}}</b-dropdown-item>
-                                        </b-dropdown>
-                                    </div>
-                                
-                                 <FormTag :options="headerFilters" @setTags="setOrderFilters"/> -->
+                            <b-col class="d-flex flex-column justify-content-start align-self-stretch">
+                                 <p class="label">Order by field:</p>
+                                 <FormTag :options="headerFilters" @setTags="setOrderFilters"/> 
                             </b-col>
-                            <b-col>
+                            <b-col class="d-flex flex-column justify-content-start align-self-stretch">
+                                    <p class="label">Your views:</p>
                                     <div class="form-group">
                                         <b-dropdown :text="currentView.name" variant="outline" >
                                             <b-dropdown-item  href="#" v-for="(view,i) in views" :key="i" @click="changeView(view)">{{view.name}}</b-dropdown-item>
@@ -47,7 +44,7 @@
                 </Box>
             </b-col>
         </b-row> 
-    <TableTest :addColumnButton="true" :header1="getHeaderPrimary" :header2="getHeaderSeconday" :items="getItems" :perPage="perPage" :currentFilter="currentFilter" :currentOrderFilter="currentOrderFilter" :textFilter="textFilter" @sendHeaders="getHeaderFilters"/>
+    <TableTest :addColumnButton="true" :standarts="getStandarts" :header1="getHeaderPrimary" :header2="getHeaderSeconday" :items="getItems" :perPage="perPage" :currentFilter="currentFilter" :currentOrderFilter="currentOrderFilter" :textFilter="textFilter" @sendHeaders="getHeaderFilters"/>
   </div>
 </template>
 
@@ -78,8 +75,6 @@ export default class TableViewExample extends Vue {
     currentOrderFilter : Array<any> = []
     currentView : any = this.views[0]
     headerFilters: Array<any> = []
-
-
 
     async created(){
        await this.fetchRequests();
@@ -118,7 +113,9 @@ export default class TableViewExample extends Vue {
     @requests.Getter(RequestsMethods.getters.GET_HEADER_SECONDARY)
      getHeaderSeconday!: Array<any>; 
     @requests.Getter(RequestsMethods.getters.GET_ITEMS)
-     getItems!: Array<any>; 
+     getItems!: Array<any>;
+    @requests.Getter(RequestsMethods.getters.GET_STANDARTS)
+     getStandarts!: Array<any>;
 }
 
 </script>

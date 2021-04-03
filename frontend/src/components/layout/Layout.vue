@@ -1,12 +1,16 @@
 <template>
-   <div class="app">
+   <div class="app min-vh-100">
             <Header></Header>
-            <b-row style="min-height:100vh">
+            <SideNav :links="getUserRoutes"/>
+            <!-- <b-row style="min-height:100vh">
                 <SideNav :links="getUserRoutes"/>
                 <b-col cols="10" class="content" align-self="stretch">
                     <slot></slot>
                 </b-col>
-            </b-row>        
+            </b-row>        -->
+            <div class="content">
+                <slot></slot>
+            </div>
    </div>
 </template>
 
@@ -30,6 +34,7 @@ export default class Layout extends Vue {
    async mounted(){
         await this.fetchUserRoutes(1);
         getRoutes(this.getUserRoutes,this.$router)
+        console.log(this.getUserRoutes)
     }
 
   @users.Getter(UsersMethods.getters.GET_USER_ROUTES)

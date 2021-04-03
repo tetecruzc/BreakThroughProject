@@ -81,6 +81,7 @@ const users: Module<UsersStateInterface, any> = {
         async [UsersTypes.actions.FETCH_ACTIVITIES_USER_ROUTES]({ commit }, id : number): Promise<boolean> {
             try {
                 const response : Route = await usersRepository.getUserActivitiesRoutes(id); 
+                console.log(response)
                 commit(UsersTypes.mutations.SET_ACTIVITIES_USER_ROUTES,response);
                 return false;
             } catch (e) {

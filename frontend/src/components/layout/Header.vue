@@ -1,6 +1,9 @@
 .<template>
   <b-navbar sticky toggleable="lg">
-    <b-icon icon="compass" class="icon-light mr-2" font-scale="2"></b-icon>
+    
+      <b-icon v-b-toggle.sidebar-backdrop icon="list" class="icon-light mr-2" aria-hidden="true" font-scale="2"></b-icon>
+    
+    <!-- <b-icon icon="compass" class="icon-light mr-2" font-scale="2"></b-icon> -->
     <b-navbar-brand href="#">IntraSys</b-navbar-brand>
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
   </b-navbar>

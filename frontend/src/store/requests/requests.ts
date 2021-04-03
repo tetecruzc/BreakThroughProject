@@ -19,6 +19,9 @@ const requests: Module<RequestsStateInterface, any> = {
         [RequestsTypes.getters.GET_ITEMS](state): Array<any> {
             return state.tableRequests.items;
         },
+        [RequestsTypes.getters.GET_STANDARTS](state): Array<any> {
+            return state.tableRequests.standarts;
+        },
         [RequestsTypes.getters.GET_TOTAL_REQUESTS](state): number {
             return state.totalRequests;
         }
@@ -28,6 +31,7 @@ const requests: Module<RequestsStateInterface, any> = {
             state.tableRequests.headerPrimary = requests.headerPrimary
             state.tableRequests.headerSecondary = requests.headerSecondary
             state.tableRequests.items = requests.items
+            state.tableRequests.standarts = requests.standarts
         },
         [RequestsTypes.mutations.SET_TOTAL_REQUESTS](state, total_requests: number): void {
             state.totalRequests = total_requests;

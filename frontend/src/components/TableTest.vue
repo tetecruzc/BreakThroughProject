@@ -11,7 +11,7 @@
             <b-thead>
                 <b-tr>
                     <b-th v-for="(header,i) in shownPrimaryHeader" :key="i" :colspan="header.children.length" :sticky-column="header.sticky === true ? true : false">
-                        <b-row>
+                        <b-row class="m-0 flex-nowrap justify-content-center align-items-center">
                             <p style="margin:0;">{{header.name}}</p>
                             <TableColumnPopup :id="'table-popover-1'+i" :items="orderedItems" :headers1="primaryHeader" :headers2="secondaryHeader" :allHeaderSecondary="header2" :col="header"  @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" /> 
                         </b-row>
@@ -19,7 +19,7 @@
                 </b-tr>
                 <b-tr>
                     <b-th v-for="(header,i) in shownSecondaryHeader" :key="i" :sticky-column="isStickyColumnChild(header)">
-                        <b-row>
+                        <b-row class="m-0 flex-nowrap justify-content-center align-items-center">
                             <p>{{header.name}}</p>
                             <TableColumnPopup :id="'table-popover-2'+i" :items="orderedItems" :headers1="primaryHeader" :headers2="secondaryHeader" :col="header" @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" />
                         </b-row>
@@ -27,8 +27,11 @@
                 </b-tr>
             </b-thead>
             <b-tbody>
-                <b-tr v-for="(item,i) in getItemsPerPage" :key="i"> <!--getItemsPerPage-->
-                    <b-td v-for="(it,j) in item" :key="j">{{it}}</b-td>
+                <b-tr v-for="(item,i) in getItemsPerPage" :key="i" > <!--getItemsPerPage-->
+                    <b-td v-for="(it,j) in getItemsKeys(item)" :key="j">
+                        <div v-if="!isStatusField(getItemsKeys(item)[j])">{{item[getItemsKeys(item)[j]]}}</div>
+                        <b-badge v-else pill :class="checkBadgeStatus(item[getItemsKeys(item)[j]],getItemsKeys(item)[j])">{{item[getItemsKeys(item)[j]]}}</b-badge>
+                    </b-td> 
                 </b-tr>
             </b-tbody>
         </b-table-simple>
@@ -43,6 +46,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import TableColumnPopup from './TableColumnPopup.vue'
 import Box from './utilities/Box.vue'
 import AddColumnPopup from './AddColumnPopup.vue';
+import {keySort} from '../utils/global-functions'
 
 @Component({
     components:{
@@ -55,6 +59,7 @@ export default class TableTest extends Vue {
     @Prop() header1!: Array<any>;
     @Prop() header2!: Array<any>;
     @Prop() items!: Array<any>;
+    @Prop() standarts!: Array<any>;
     @Prop() perPage!: number;
     perPageLocal : number = 2;
     @Prop() textFilter: string = '';
@@ -67,21 +72,47 @@ export default class TableTest extends Vue {
     secondaryHeader : any[] = [];
     primaryHeader : any[] = [];
     showAddColumnModal: boolean = false;
+    // standards : Array<any> = [
+    //     {key: 'verificacion', colors: {'Verificado': 3,'No verificado':2}},
+    //     {key: 'estatus_de_transferencia', colors: {'Transferido': 3, 'No transferido':2}}
+    // ] 
+
 
     mounted(){
-       // this.secondaryHeader = this.header2.filter(el => el.shown === true)
-       // this.primaryHeader = this.header1.filter(el => el.shown === true)
-       // this.filteredItems = this.items;
+        //keySort(this.sorto,this.obja);
+    //    this.secondaryHeader = this.header2.filter(el => el.shown === true)
+    //    this.primaryHeader = this.header1.filter(el => el.shown === true)
+    //    this.filteredItems = this.items;
         this.orderItems();
         if (this.perPage) this.perPageLocal = this.perPage;
         this.$emit('sendHeaders',this.secondaryHeader)
     }
 
-
-    get isDataLoading(): boolean{
-        if (this.secondaryHeader.length > 0) return false; 
-        else return true
+    getItemsKeys(items: any){
+        return Object.keys(items)
     }
+
+    checkBadgeStatus(value: any, key: any){
+        let keyFound = this.standarts.find(el => el.key === key);
+        if (keyFound) {
+            for (let i in this.getItemsKeys(keyFound.colors)){
+                if (this.getItemsKeys(keyFound.colors)[i] === value){
+                    return 'badge-'+ keyFound.colors[this.getItemsKeys(keyFound.colors)[i]]
+                }
+            }
+        }
+    }
+
+    isStatusField(key: any){
+        let found = this.standarts.find(el => el.key === key)
+        if (found) return true
+        else return false
+    }
+
+    // get isDataLoading(): boolean{
+    //     if (this.secondaryHeader.length > 0) return false; 
+    //     else return true
+    // }
 
     get shownSecondaryHeader() : Array<any>{ 
         if (this.secondaryHeader.length === 0){
@@ -111,28 +142,29 @@ export default class TableTest extends Vue {
 /* FILTERS */
 
     @Watch('currentOrderFilter')
-    changeOrderFilter(){
-        /*
-        this.filteredItems = this.items.sort((a: any,b: any)=>{
-            if (a[this.currentOrderFilter.key] > b[this.currentOrderFilter.key]){
-                return 1
-            }
-            else return -1
-        })
-        this.orderItems(); */
+    changeOrderFilter(newVal: any){
+        // cuando se reinician los filtros del sort, no se reinician los items de la table 
+       this.filteredItems = keySort(newVal,this.filteredItems);
+        this.orderItems(); 
     }
 
     @Watch('textFilter')
     filterByString(){
-        this.filteredItems = this.items.filter( el => el[this.currentFilter.key].toString().toLowerCase().includes(this.textFilter.toLowerCase()))     
+        this.filteredItems = this.items.filter( el => el[this.currentFilter.key].toString().toLowerCase().includes(this.textFilter.toLowerCase()));
         this.orderItems();
     }
+
 
 /* END FILTERS */
 
 /* PAGINATION */
+    @Watch('perPage')
+    changeItemsPerPage(){
+        this.perPageLocal = this.perPage
+    }
+
     get getItemsPerPage(): any {
-        if (this.orderedItems.length === 0) this.orderedItems = this.items
+        if (this.orderedItems.length === 0) this.orderedItems = this.items // carga inicial, arreglar
         let start = this.currentPage === 1 ? 0 : this.currentPage * this.perPageLocal - this.perPageLocal;
         let end = start + this.perPageLocal;
         return this.orderedItems.slice(start,end)
@@ -191,6 +223,7 @@ export default class TableTest extends Vue {
     openModal(){
         this.showAddColumnModal = true
     }
+/* END MODAL */
 
 }
 </script>
