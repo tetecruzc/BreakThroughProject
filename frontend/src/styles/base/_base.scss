@@ -1,9 +1,13 @@
 *{
     font-family: Avenir, Helvetica, Arial, sans-serif;
-    background-color: $color-terciary;
+    
    &:focus{
        outline: none !important;
    }
+}
+
+.app{
+    background-color: $color-terciary;
 }
 
 a:hover{

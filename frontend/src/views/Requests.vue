@@ -1,6 +1,6 @@
 <template >
   <div class="home">
-    <b-row class="my-4 " align-h="around">
+    <b-row v-if="getItems.length > 0" class="my-4 " align-h="around">
             <b-col>
                 <Box title="Filtros">
                         <b-row>
@@ -43,8 +43,13 @@
                         </b-row>
                 </Box>
             </b-col>
-        </b-row> 
-    <TableTest :addColumnButton="true" :standarts="getStandarts" :header1="getHeaderPrimary" :header2="getHeaderSeconday" :items="getItems" :perPage="perPage" :currentFilter="currentFilter" :currentOrderFilter="currentOrderFilter" :textFilter="textFilter" @sendHeaders="getHeaderFilters"/>
+    </b-row> 
+    <b-row v-if="getItems.length > 0">
+        <TableTest  :addColumnButton="true" :standarts="getStandarts" :header1="getHeaderPrimary" :header2="getHeaderSeconday" :items="getItems" :perPage="perPage" :currentFilter="currentFilter" :currentOrderFilter="currentOrderFilter" :textFilter="textFilter" @sendHeaders="getHeaderFilters"/>
+    </b-row>
+    <b-row v-else class="mb-auto">
+        <b-spinner class="my-4"></b-spinner>
+    </b-row>
   </div>
 </template>
 
