@@ -5,7 +5,7 @@
         </b-button>
         <b-popover  :target="id" triggers="focus">
             <b-list-group>
-                    <b-list-group-item v-if="col.children" @click="changeColumn('add')">
+                    <b-list-group-item v-if="col.children && !isFixedColumn(col)" @click="changeColumn('add')">
                         <b-icon icon="plus-circle" class="icon-dark mr-2" ></b-icon>
                         Add column
                     </b-list-group-item>
@@ -13,17 +13,25 @@
                         <b-icon icon="trash" class="icon-dark mr-2" ></b-icon>
                         Remove column
                     </b-list-group-item>
-                    <b-list-group-item v-if="canColumnMove(col,'left')" @click="changeColumn('left')">
+                    <b-list-group-item v-if="canColumnMove(col,'left') && !isFixedColumn(col)" @click="changeColumn('left')">
                         <b-icon icon="chevron-left" class="icon-dark mr-2" ></b-icon>
                         Move column left
                     </b-list-group-item>
-                    <b-list-group-item v-if="canColumnMove(col,'right')" @click="changeColumn('right')">
+                    <b-list-group-item v-if="canColumnMove(col,'right') && !isFixedColumn(col)" @click="changeColumn('right')">
                         <b-icon icon="chevron-right" class="icon-dark mr-2" ></b-icon>
                         Move column right
                     </b-list-group-item>
+                    <b-list-group-item v-if="!col.children && !isFixedColumn(col) && !existingColumn()" @click="changeColumn('pin')">
+                        <b-icon icon="geo" class="icon-dark mr-2" ></b-icon>
+                        Pin
+                    </b-list-group-item>
+                    <b-list-group-item v-if="!col.children && isFixedColumn(col)" @click="changeColumn('unpin')">
+                        <b-icon icon="geo" class="icon-dark mr-2" ></b-icon>
+                        Unpin
+                    </b-list-group-item>
             </b-list-group>
         </b-popover>
-        <AddColumnPopup title="Editar columna" :col="col"  :primaryHeader="headers1" :secondaryHeader="headers2" :showModal="showAddColumnModal"  @saveView="saveView" @changeModalStatus="changeModalStatus" @changeHeaders="sendHeadersToParent"/>
+        <AddColumnPopup title="Editar columna" :col="col"  :primaryHeader="headers1" :secondaryHeader="originalHeaderSecondary" :showModal="showAddColumnModal"  @saveView="saveView" @changeModalStatus="changeModalStatus" @changeHeaders="sendHeadersToParent"/>
     </div>
 </template>
 
@@ -40,6 +48,7 @@ export default class TableColumnPopup extends Vue {
     @Prop() id! : string;
     @Prop() headers1!: Array<any>; 
     @Prop() headers2!: Array<any>; 
+    @Prop() originalHeaderSecondary!: Array<any>;
     @Prop() items!: Array<any>; 
     @Prop() col: any; 
     @Prop() allHeaderSecondary? : Array<any>;
@@ -101,20 +110,62 @@ export default class TableColumnPopup extends Vue {
                 this.sendHeadersToParent(headerSecondary,headers)
             } 
             else {  
-                headers = this.headers1      
-                let headerSecondaryParent = this.headers1.find(el => el.key === this.col.parent)
-                let newHeaderPrimary = this.removeColumnChild(headerSecondaryParent, this.col)
-                headerSecondary = this.removeColumn(this.headers2,this.col);
-                if (headerSecondaryParent.children.length === 0) {
-                   newHeaderPrimary = this.removeColumn(newHeaderPrimary,headerSecondaryParent)
-                   headers = newHeaderPrimary
-                }
+                let {headers, headerSecondary} = this.getRemovedColumns();
                 this.sendHeadersToParent(headerSecondary, headers)
             }
         }
         else if (val === 'add'){
             this.showAddColumnModal = true;
         }
+        else if (val === 'pin'){
+            let {headers, headerSecondary} = this.getRemovedColumns(); 
+            this.col.pined = true
+            headerSecondary.unshift(this.col)
+            let object ={
+                "name": 'Pined',
+                "key": 'pin',
+                "shown": true,
+                "children": [
+                    this.col
+                ]
+            }
+            headers.unshift(object)
+            this.sendHeadersToParent(headerSecondary, headers)
+        }
+        else if (val === 'unpin'){
+            let headers = this.headers1;
+            let headerSecondary = this.headers2;
+            headerSecondary.shift();
+            headers.shift();
+            this.col.pined = false;
+            let headerSecondaryParent = this.headers1.find(el => el.key === this.col.parent);
+            headerSecondary = this.addColumnToParent(headerSecondary,headerSecondaryParent, this.col);
+            headers = this.addChildrenToParent(headers,headerSecondaryParent,this.col)
+            this.sendHeadersToParent(headerSecondary, headers)
+        }
+    }
+
+    isFixedColumn(col: any){
+            if ((col.key === 'pin') || (col.pined === true))  return true
+            else return false
+    }
+
+    existingColumn(){
+        let found = this.headers2.find((el: { pined: boolean;}) => el.pined === true)
+        if (found) return true
+        else return false
+    }
+
+    getRemovedColumns(): any{
+        let headers = this.headers1      
+        let headerSecondaryParent = this.headers1.find(el => el.key === this.col.parent)
+        let newHeaderPrimary = this.removeColumnChild(headerSecondaryParent, this.col)
+        let headerSecondary = this.removeColumn(this.headers2,this.col);
+        if (headerSecondaryParent.children.length === 0) {
+            newHeaderPrimary = this.removeColumn(newHeaderPrimary,headerSecondaryParent)
+            headers = newHeaderPrimary
+        }
+        return {headers,headerSecondary}
     }
 
 
@@ -129,13 +180,13 @@ export default class TableColumnPopup extends Vue {
     }
 
 
-    addChildrenToParent(parentColumn: any, children: any){ // Agrega al header 1 sus nuevos hijos en el arreglo
-        parentColumn.forEach((el: { key: any; children: any; }) =>{  
-            if (el.key === this.col.key){
-                el.children = children
+    addChildrenToParent(headerParent: any, parentColumn: any, children: any){ // Agrega al header 1 sus nuevos hijos en el arreglo
+        headerParent.forEach((element: { key: any; children: any;}) =>{
+            if (element.key === parentColumn.key){
+                element.children.push(children)
             }
         })
-        return parentColumn
+        return headerParent
     }
 
     setSelectedChilds(){

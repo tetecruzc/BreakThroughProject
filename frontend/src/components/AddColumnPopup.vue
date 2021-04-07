@@ -7,17 +7,17 @@
             <b-card no-body>
                 <b-row class="vertical-tabs">
                     <b-col class="vertical-tabs__tabs pa-0">
-                        <b-row  v-if="col"  class="tabs p-2 active" >
-                            <p>{{col.name}}</p>
+                        <b-row  v-if="col" class="tabs p-2 pl-3 active" >
+                            <p>{{col.name === null ? 'Otras columnas' : col.name}}</p>
                             <b-icon icon="chevron-right" class="icon-dark icon-small mr-2" ></b-icon>
                         </b-row>
-                        <b-row v-else  v-for="(tab,i) in primaryHeaderLocal" :key="i" :class="isCurrentTab(tab) === true ? 'tabs p-2 active' : 'tabs p-2'" @click="changeCurrentTab(tab)">
+                        <b-row v-else  v-for="(tab,i) in primaryHeaderLocal" :key="i" :class="isCurrentTab(tab) === true ? 'tabs p-2 pl-3 active' : 'tabs p-2 pl-3'" @click="changeCurrentTab(tab)">
                             <p>{{tab.name === null ? 'Otras columnas' : tab.name}}</p>
                             <b-icon icon="chevron-right" class="icon-dark icon-small mr-2" ></b-icon>
                         </b-row>          
                     </b-col>
                     <b-col class="vertical-tabs__content pa-0">
-                        <b-row v-for="(content,j) in currentChildren" :key="j">
+                        <b-row v-for="(content,j) in currentChildren" :key="j" class="px-2">
                             <b-form-checkbox class="my-2" v-model="content.shown">{{content.name}}</b-form-checkbox>
                         </b-row>
                     </b-col>
@@ -49,8 +49,20 @@ export default class AddColumnPopup extends Vue {
        if (this.primaryHeader) this.currentTab = this.primaryHeader[0]!
        if (this.col) this.currentTab = this.col
         this.currentChildren = this.categoryChildren;   
+        
     }
 
+    @Watch('primaryHeader')
+    changePrimaryHeader(){
+        this.primaryHeaderLocal = this.primaryHeader
+    }
+
+    @Watch('secondaryHeader')
+    changeSecondaryHeader(){
+        this.secondaryHeaderLocal = this.secondaryHeader
+    }
+
+/* MODAL */
     @Watch('showModal')
     renderModal(){
         this.primaryHeaderLocal = this.primaryHeader;
@@ -62,8 +74,9 @@ export default class AddColumnPopup extends Vue {
     sendToParent(newVal: boolean){
         this.$emit('changeModalStatus', newVal)
     }
+/* END MODAL */
 
-    get categoryChildren() : Array<any>{
+    get categoryChildren() : Array<any>{ /*  */
         let children : any = []
         for (let i in this.secondaryHeaderLocal){
             if (this.secondaryHeaderLocal[i].parent === this.currentTab.key) children.push(this.secondaryHeaderLocal[i])

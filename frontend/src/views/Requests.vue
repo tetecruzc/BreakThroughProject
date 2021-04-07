@@ -1,9 +1,9 @@
-<template >
-  <div class="home">
-    <b-row v-if="getItems.length > 0" class="my-4 " align-h="around">
+<template>
+  <div>
+    <b-row v-if="getItems.length > 0" >
             <b-col>
                 <Box title="Filtros">
-                        <b-row>
+                        <b-row cols="1" cols-sm="2" cols-md="2" cols-lg="4">
                             <b-col class="d-flex flex-column justify-content-start align-self-stretch">
                                 <p class="label">Registros por página:</p>
                                 <div class="form-group">
@@ -38,29 +38,28 @@
                                             <b-dropdown-item  href="#" v-for="(view,i) in views" :key="i" @click="changeView(view)">{{view.name}}</b-dropdown-item>
                                         </b-dropdown>
                                     </div>
-                                    <b-button class="button-primary my-3 " block @click="saveView">Añadir vista actual</b-button>
+                                    <b-button class="button-primary my-3 " block @click="saveView()">Añadir vista actual</b-button>
                             </b-col>
                         </b-row>
                 </Box>
             </b-col>
     </b-row> 
-    <b-row v-if="getItems.length > 0">
-        <TableTest  :addColumnButton="true" :standarts="getStandarts" :header1="getHeaderPrimary" :header2="getHeaderSeconday" :items="getItems" :perPage="perPage" :currentFilter="currentFilter" :currentOrderFilter="currentOrderFilter" :textFilter="textFilter" @sendHeaders="getHeaderFilters"/>
+    <b-row  v-if="getItems.length > 0">
+        <TableTest :addColumnButton="true" :standarts="getStandarts" :header1="currentView.headerPrimary" :header2="currentView.headerSecondary" :items="getItems" :perPage="perPage" :currentFilter="currentFilter" :currentOrderFilter="currentOrderFilter" :textFilter="textFilter" @sendHeaders="getHeaderFilters"/>
     </b-row>
-    <b-row v-else class="mb-auto">
-        <b-spinner class="my-4"></b-spinner>
-    </b-row>
+    <b-spinner v-else class="my-4"></b-spinner>  
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import UsersTable from '../modules/users/components/UsersTable.vue'; // @ is an alias to /src
+import UsersTable from '../modules/users/components/UsersTable.vue';
 import TableTest from '../components/TableTest.vue'
 import Box from '../components/utilities/Box.vue'
 import FormTag from '../components/utilities/FormTag.vue'
 import {requests} from '../store/namespaces'
 import RequestsMethods from '../store/requests/methods/requests.methods';
+
 @Component({
   components: {
     UsersTable,
@@ -73,23 +72,28 @@ export default class TableViewExample extends Vue {
     perPage : number = 10;
     textFilter : string = ''
     currentFilter : any = {}
-    views =[
-        {name: 'Vista 1'},
-        {name: 'Vista 2'}
-    ]
     currentOrderFilter : Array<any> = []
-    currentView : any = this.views[0]
+    currentView : any = []
     headerFilters: Array<any> = []
 
     async created(){
        await this.fetchRequests();
         if (this.headerFilters){ 
-            this.currentFilter = this.headerFilters[0]
+            this.currentFilter = this.headerFilters[0];
         }
     }
 
-    saveView(){
-        /* ENVIAMOS VISTA AL BACK */
+    beforeMount(){
+        this.currentView = this.views[1];
+    }
+
+    async saveView(){
+        let userId : number = 1;
+        await this.saveRequestView(userId,this.headerFilters)
+    }
+
+    get views(){
+        return this.getViews;
     }
 
     changeFilter(header: any){
@@ -98,31 +102,35 @@ export default class TableViewExample extends Vue {
 
     changeView(view : any){
         this.currentView = view
+        this.headerFilters = view.headerSecondary;
+        console.log(this.currentView)
     }
 
     getHeaderFilters(newVal: any){
         this.headerFilters = newVal;
     }
-    /*
-        changeOrderFilter(header: any){
-            this.currentOrderFilter = header;
-        }
-    */
+    
     setOrderFilters(newVal: any){
        this.currentOrderFilter = newVal;
     }
+
     @requests.Action(RequestsMethods.actions.FETCH_ALL_REQUESTS)
-    fetchRequests!: () => boolean; 
-    @requests.Getter(RequestsMethods.getters.GET_HEADER_PRIMARY)
-     getHeaderPrimary!: Array<any>;    
-    @requests.Getter(RequestsMethods.getters.GET_HEADER_SECONDARY)
-     getHeaderSeconday!: Array<any>; 
+        fetchRequests!: () => boolean;
+    @requests.Action(RequestsMethods.actions.FETCH_REQUEST_VIEWS)
+        fetchRequestsViews!: (userId: number) => boolean;
+    @requests.Action(RequestsMethods.actions.SAVE_REQUEST_VIEW)
+        saveRequestView!: (userId: number,header: any) => boolean;   // Requests Type 
+    // @requests.Getter(RequestsMethods.getters.GET_HEADER_PRIMARY)
+    //     getHeaderPrimary!: Array<any>;     
     @requests.Getter(RequestsMethods.getters.GET_ITEMS)
-     getItems!: Array<any>;
+        getItems!: Array<any>;
     @requests.Getter(RequestsMethods.getters.GET_STANDARTS)
-     getStandarts!: Array<any>;
+        getStandarts!: Array<any>;
+    @requests.Getter(RequestsMethods.getters.GET_VIEWS)
+        getViews!: Array<any>;
 }
 
 </script>
+
 
 

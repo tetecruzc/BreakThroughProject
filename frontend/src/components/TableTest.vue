@@ -2,40 +2,39 @@
     <b-container>
         <b-row v-if="addColumnButton">
             <b-button class="button-primary my-3 ml-auto" @click="openModal()">Add column</b-button>
-            <AddColumnPopup title="Añadir columnas" :showModal="showAddColumnModal" :currentChildren="itemsWithoutParent"  @changeModalStatus="changeModalStatus" :primaryHeader="header1" :secondaryHeader="header2" @changeHeader2="changeHeader2" @changeHeader1="changeHeader1"/>
+            <AddColumnPopup title="Añadir columnas" :showModal="showAddColumnModal" :currentChildren="itemsWithoutParent"  @changeModalStatus="changeModalStatus" :primaryHeader="headersWithoutPined" :secondaryHeader="header2" @changeHeader2="changeHeader2" @changeHeader1="changeHeader1"/>
         </b-row>
-        <!-- <b-row v-if="isDataLoading" class="mb-auto">
-                <b-spinner class="my-4"></b-spinner>
-        </b-row> -->
-        <b-table-simple responsive bordered>
-            <b-thead>
-                <b-tr>
-                    <b-th v-for="(header,i) in shownPrimaryHeader" :key="i" :colspan="header.children.length" :sticky-column="header.sticky === true ? true : false">
-                        <b-row class="m-0 flex-nowrap justify-content-center align-items-center">
-                            <p style="margin:0;">{{header.name}}</p>
-                            <TableColumnPopup :id="'table-popover-1'+i" :items="orderedItems" :headers1="primaryHeader" :headers2="secondaryHeader" :allHeaderSecondary="header2" :col="header"  @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" /> 
-                        </b-row>
-                    </b-th>
-                </b-tr>
-                <b-tr>
-                    <b-th v-for="(header,i) in shownSecondaryHeader" :key="i" :sticky-column="isStickyColumnChild(header)">
-                        <b-row class="m-0 flex-nowrap justify-content-center align-items-center">
-                            <p>{{header.name}}</p>
-                            <TableColumnPopup :id="'table-popover-2'+i" :items="orderedItems" :headers1="primaryHeader" :headers2="secondaryHeader" :col="header" @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" />
-                        </b-row>
-                    </b-th>
-                </b-tr>
-            </b-thead>
-            <b-tbody>
-                <b-tr v-for="(item,i) in getItemsPerPage" :key="i" > <!--getItemsPerPage-->
-                    <b-td v-for="(it,j) in getItemsKeys(item)" :key="j">
-                        <div v-if="!isStatusField(getItemsKeys(item)[j])">{{item[getItemsKeys(item)[j]]}}</div>
-                        <b-badge v-else pill :class="checkBadgeStatus(item[getItemsKeys(item)[j]],getItemsKeys(item)[j])">{{item[getItemsKeys(item)[j]]}}</b-badge>
-                    </b-td> 
-                </b-tr>
-            </b-tbody>
-        </b-table-simple>
-        <div  class="justify-content-center row mb-2 mt-auto">
+        <b-row>
+            <b-table-simple responsive bordered >
+                <b-thead>
+                    <b-tr>
+                        <b-th v-for="(header,i) in shownPrimaryHeader"  :key="i" :colspan="header.children.length" :sticky-column="i === 0 && existingColumn() ? true : false" :class="i === 0 && existingColumn() ? 'pined' : ''"> 
+                            <b-row class="m-0 flex-nowrap justify-content-center align-items-center">
+                                <p style="margin:0;">{{header.name === 'Pined' ? '' : header.name}}</p>
+                                <TableColumnPopup :id="'table-popover-1'+i" :items="orderedItems" :originalHeaderSecondary="header2" :headers1="primaryHeader" :headers2="secondaryHeader" :allHeaderSecondary="header2" :col="header"  @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" /> 
+                            </b-row>
+                        </b-th>
+                    </b-tr>
+                    <b-tr>
+                        <b-th v-for="(header,i) in shownSecondaryHeader" :key="i"  :sticky-column="i === 0 && existingColumn() ? true : false" :class="i === 0 && existingColumn() ? 'pined' : ''"> 
+                            <b-row class="m-0 flex-nowrap justify-content-center align-items-center">
+                                <p>{{header.name}}</p>
+                                <TableColumnPopup :id="'table-popover-2'+i" :items="orderedItems" :originalHeaderSecondary="header2" :headers1="primaryHeader" :headers2="secondaryHeader" :col="header" @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" />
+                            </b-row>
+                        </b-th>
+                    </b-tr>
+                </b-thead>
+                <b-tbody>
+                    <b-tr v-for="(item,i) in getItemsPerPage" :key="i" > 
+                        <b-td v-for="(it,j) in getItemsKeys(item)" :key="j" :sticky-column="j === 0 && existingColumn() ? true : false" :class="j === 0 && existingColumn() ? 'pined' : ''">
+                            <div v-if="!isStatusField(getItemsKeys(item)[j])">{{item[getItemsKeys(item)[j]]}}</div>
+                            <b-badge v-else pill :class="checkBadgeStatus(item[getItemsKeys(item)[j]],getItemsKeys(item)[j])">{{item[getItemsKeys(item)[j]]}}</b-badge>
+                        </b-td> 
+                    </b-tr>
+                </b-tbody>
+            </b-table-simple>
+        </b-row>
+        <div class="justify-content-center row mb-2 mt-4">
             <b-pagination size="md" :total-rows="this.orderedItems.length" :per-page="perPageLocal" v-model="currentPage" />
         </div>
     </b-container>
@@ -72,18 +71,9 @@ export default class TableTest extends Vue {
     secondaryHeader : any[] = [];
     primaryHeader : any[] = [];
     showAddColumnModal: boolean = false;
-    // standards : Array<any> = [
-    //     {key: 'verificacion', colors: {'Verificado': 3,'No verificado':2}},
-    //     {key: 'estatus_de_transferencia', colors: {'Transferido': 3, 'No transferido':2}}
-    // ] 
 
 
     mounted(){
-        //keySort(this.sorto,this.obja);
-    //    this.secondaryHeader = this.header2.filter(el => el.shown === true)
-    //    this.primaryHeader = this.header1.filter(el => el.shown === true)
-    //    this.filteredItems = this.items;
-        this.orderItems();
         if (this.perPage) this.perPageLocal = this.perPage;
         this.$emit('sendHeaders',this.secondaryHeader)
     }
@@ -103,24 +93,25 @@ export default class TableTest extends Vue {
         }
     }
 
+    get headersWithoutPined(){
+        return this.header1.filter(el => el.key !== 'pin')
+    }
+
     isStatusField(key: any){
         let found = this.standarts.find(el => el.key === key)
         if (found) return true
         else return false
     }
 
-    // get isDataLoading(): boolean{
-    //     if (this.secondaryHeader.length > 0) return false; 
-    //     else return true
-    // }
-
     get shownSecondaryHeader() : Array<any>{ 
         if (this.secondaryHeader.length === 0){
             this.secondaryHeader = this.header2.filter(el => el.shown === true)
             this.filteredItems = this.items;
         }    
+        this.orderHeaderSecondary();
         return this.secondaryHeader
     }
+
 
     get shownPrimaryHeader() : Array<any>{
         if (this.primaryHeader.length === 0)
@@ -133,10 +124,32 @@ export default class TableTest extends Vue {
         this.$emit('sendHeaders',this.secondaryHeader)
     }
 
-    isStickyColumnChild(header: any): boolean{
-        let found = this.header1.find(el => el.key === header.parent && el.sticky === true);
+    @Watch('header1')
+    changedViewHeader1(){
+        this.primaryHeader = this.header1; 
+    }
+
+    @Watch('header2')
+    changedViewHeader2(){
+        this.secondaryHeader = this.header2; 
+        this.orderItems();
+    }
+
+    existingColumn(): boolean{
+        let found = this.secondaryHeader.find((el: { pined: boolean;}) => el.pined === true)
         if (found) return true
         else return false
+    }
+
+    orderHeaderSecondary(){
+        let orderedHeaderSecondary: Array<any> = [];
+        this.shownPrimaryHeader.forEach(el =>{
+                el.children.forEach((children: any)  =>{
+                   let element = this.secondaryHeader.find(header => header.key === children.key)
+                   if (element) orderedHeaderSecondary.push(element)
+                })  
+        })
+        this.secondaryHeader = orderedHeaderSecondary;
     }
 
 /* FILTERS */
@@ -154,17 +167,18 @@ export default class TableTest extends Vue {
         this.orderItems();
     }
 
-
 /* END FILTERS */
 
+
 /* PAGINATION */
+
     @Watch('perPage')
     changeItemsPerPage(){
         this.perPageLocal = this.perPage
     }
 
     get getItemsPerPage(): any {
-        if (this.orderedItems.length === 0) this.orderedItems = this.items // carga inicial, arreglar
+       if (this.orderedItems.length === 0) {this.filteredItems = this.items; this.orderItems()} // carga inicial, arreglar
         let start = this.currentPage === 1 ? 0 : this.currentPage * this.perPageLocal - this.perPageLocal;
         let end = start + this.perPageLocal;
         return this.orderedItems.slice(start,end)
@@ -174,6 +188,7 @@ export default class TableTest extends Vue {
         getPage(val: number){
             this.currentPage = val;
     }
+
 /* END PAGINATION */
 
     changeHeader1(newVal : any){ 
@@ -197,19 +212,13 @@ export default class TableTest extends Vue {
             let value : any = null
             for (var i=0;i<this.secondaryHeader.length;i++){
                 let key : any = this.secondaryHeader[i]['key']
-                value = this.filteredItems[j][key]; // this.items
+                value = this.filteredItems[j][key]; 
                 obj[i] = value
             }   
             newItemsOrder[j] = obj
         }
         this.orderedItems = newItemsOrder
     }
-        // creo que seria mas facil para orderitems
-            // for (var i=0;i<this.items.length;i++){
-        //     let values : any = Object.values(this.items[i]);
-        //     console.log(values)
-        //     this.orderedItems.push(values)
-        // }
 
     get itemsWithoutParent() : Array<any>{
         return this.header2.filter(el => el.parent === null)
@@ -240,6 +249,10 @@ export default class TableTest extends Vue {
     }
     .b-table{
         background-color: #fff;
+    }
+    .table-responsive{
+        width: 90vw !important;
+        margin: 0 auto !important;
     }
 
 </style>

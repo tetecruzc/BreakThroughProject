@@ -54,7 +54,7 @@
               @click="onOptionClick( option, addTag, tags )">
               {{option.name}}
             </b-dropdown-item-button>
-            <b-dropdown-text v-if="availableOptions.length === 0">
+            <b-dropdown-text v-if="availableOptions.length === 0" class="pa-2">
               No hay columnas disponibles para seleccionar
             </b-dropdown-text>
           </b-dropdown>

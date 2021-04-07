@@ -1,16 +1,11 @@
 <template>
-   <div class="app min-vh-100">
+   <div class="app min-vh-100 d-flex flex-column bd-highlight">
             <Header></Header>
             <SideNav :links="getUserRoutes"/>
-            <!-- <b-row style="min-height:100vh">
-                <SideNav :links="getUserRoutes"/>
-                <b-col cols="10" class="content" align-self="stretch">
-                    <slot></slot>
-                </b-col>
-            </b-row>        -->
-            <div class="content">
+            <div class="content flex-grow-1 d-flex justify-content-center align-items-center">
                 <slot></slot>
             </div>
+            <!--FOOTER-->
    </div>
 </template>
 

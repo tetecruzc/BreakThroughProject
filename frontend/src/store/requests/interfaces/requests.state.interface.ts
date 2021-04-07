@@ -6,4 +6,5 @@ export interface RequestsStateInterface {
     requests: Array<any>;
     tableRequests: Table
     totalRequests: number;
+    views: Array<{ name: string, headers: Array<any>}> // Array de vistas...
 }

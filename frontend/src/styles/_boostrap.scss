@@ -36,10 +36,26 @@
         th{
           padding-top: 10px !important;
           min-width: 100px !important;
+          &.pined{
+            background-color: $color-primary !important;
+            color: #fff !important;
+          }
+        }
+      }
+  }
+  tbody{
+      tr{
+        td{
+          &.pined{
+            background-color: $color-primary !important;
+            color: #fff !important;
+          }
         }
       }
   }
 }
+
+
 
   .table-header-menu {
     padding: 5px;
