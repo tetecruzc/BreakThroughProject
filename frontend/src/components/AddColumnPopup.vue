@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-
+import {orderHeaderSecondary} from '../utils/table-functions'
 @Component({})
 export default class AddColumnPopup extends Vue {
     @Prop() title?: string; 
@@ -37,6 +37,7 @@ export default class AddColumnPopup extends Vue {
     @Prop() secondaryHeader!: Array<any>;
     @Prop() showModal!: boolean;
     @Prop() col? : any;
+    @Prop() originalSecondaryHeader!: Array<any>;
     show: boolean = false;
     currentTab: any = {}
     primaryHeaderLocal : Array<any> = []
@@ -52,6 +53,14 @@ export default class AddColumnPopup extends Vue {
         
     }
 
+     get categoryChildren() : Array<any>{ /* Retorna los hijos del tab seleccionado  */
+        let children : any = []
+        for (let i in this.secondaryHeaderLocal){
+            if (this.secondaryHeaderLocal[i].parent === this.currentTab.key) children.push(this.secondaryHeaderLocal[i])
+        }
+        return children
+    }
+
     @Watch('primaryHeader')
     changePrimaryHeader(){
         this.primaryHeaderLocal = this.primaryHeader
@@ -59,7 +68,7 @@ export default class AddColumnPopup extends Vue {
 
     @Watch('secondaryHeader')
     changeSecondaryHeader(){
-        this.secondaryHeaderLocal = this.secondaryHeader
+        this.secondaryHeaderLocal = this.secondaryHeader;
     }
 
 /* MODAL */
@@ -76,13 +85,7 @@ export default class AddColumnPopup extends Vue {
     }
 /* END MODAL */
 
-    get categoryChildren() : Array<any>{ /*  */
-        let children : any = []
-        for (let i in this.secondaryHeaderLocal){
-            if (this.secondaryHeaderLocal[i].parent === this.currentTab.key) children.push(this.secondaryHeaderLocal[i])
-        }
-        return children
-    }
+   
 
     changeCurrentTab(tab: any){
         this.currentTab = tab;
@@ -96,8 +99,10 @@ export default class AddColumnPopup extends Vue {
 
 
   saveView(){
+      
       this.show = false;
-      for (let i in this.primaryHeaderLocal){
+      this.secondaryHeaderLocal = orderHeaderSecondary(this.primaryHeaderLocal,this.secondaryHeaderLocal);
+      for (let i in this.primaryHeaderLocal){ 
           let children = this.secondaryHeaderLocal.filter(el => el.parent === this.primaryHeader[i].key && el.shown === true)
           if (children.length > 0){
               this.primaryHeaderLocal[i].children= []
@@ -107,7 +112,7 @@ export default class AddColumnPopup extends Vue {
               this.primaryHeaderLocal[i].shown = true
           }else{
              delete this.primaryHeaderLocal[i].children
-             this.primaryHeaderLocal[i].shown = false
+             if (this.primaryHeaderLocal[i].key !== 'pin') this.primaryHeaderLocal[i].shown = false
           }
       }
       if (!this.col){
@@ -117,6 +122,7 @@ export default class AddColumnPopup extends Vue {
           this.$emit('changeHeaders',this.secondaryHeaderLocal,this.primaryHeaderLocal)
       }
   }
+
 
 }
 </script>

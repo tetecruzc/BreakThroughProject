@@ -2,7 +2,7 @@
     <b-container>
         <b-row v-if="addColumnButton">
             <b-button class="button-primary my-3 ml-auto" @click="openModal()">Add column</b-button>
-            <AddColumnPopup title="Añadir columnas" :showModal="showAddColumnModal" :currentChildren="itemsWithoutParent"  @changeModalStatus="changeModalStatus" :primaryHeader="headersWithoutPined" :secondaryHeader="header2" @changeHeader2="changeHeader2" @changeHeader1="changeHeader1"/>
+            <AddColumnPopup title="Añadir columnas" :showModal="showAddColumnModal" :currentChildren="itemsWithoutParent"  @changeModalStatus="changeModalStatus" :primaryHeader="headersWithoutPined" :secondaryHeader="header2" :originalSecondaryHeader="header2" @changeHeader2="changeHeader2" @changeHeader1="changeHeader1"/>
         </b-row>
         <b-row>
             <b-table-simple responsive bordered >
@@ -11,7 +11,7 @@
                         <b-th v-for="(header,i) in shownPrimaryHeader"  :key="i" :colspan="header.children.length" :sticky-column="i === 0 && existingColumn() ? true : false" :class="i === 0 && existingColumn() ? 'pined' : ''"> 
                             <b-row class="m-0 flex-nowrap justify-content-center align-items-center">
                                 <p style="margin:0;">{{header.name === 'Pined' ? '' : header.name}}</p>
-                                <TableColumnPopup :id="'table-popover-1'+i" :items="orderedItems" :originalHeaderSecondary="header2" :headers1="primaryHeader" :headers2="secondaryHeader" :allHeaderSecondary="header2" :col="header"  @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" /> 
+                                <TableColumnPopup :id="'table-popover-1'+i" :items="orderedItems" :originalHeaderSecondary="header2" :headers1="primaryHeader" :headers2="secondaryHeader"  :col="header"  @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" /> 
                             </b-row>
                         </b-th>
                     </b-tr>
@@ -46,7 +46,7 @@ import TableColumnPopup from './TableColumnPopup.vue'
 import Box from './utilities/Box.vue'
 import AddColumnPopup from './AddColumnPopup.vue';
 import {keySort} from '../utils/global-functions'
-
+import {orderHeaderSecondary} from '../utils/table-functions'
 @Component({
     components:{
         TableColumnPopup,
@@ -107,8 +107,8 @@ export default class TableTest extends Vue {
         if (this.secondaryHeader.length === 0){
             this.secondaryHeader = this.header2.filter(el => el.shown === true)
             this.filteredItems = this.items;
+            this.secondaryHeader = orderHeaderSecondary(this.shownPrimaryHeader,this.secondaryHeader);
         }    
-        this.orderHeaderSecondary();
         return this.secondaryHeader
     }
 
@@ -141,16 +141,7 @@ export default class TableTest extends Vue {
         else return false
     }
 
-    orderHeaderSecondary(){
-        let orderedHeaderSecondary: Array<any> = [];
-        this.shownPrimaryHeader.forEach(el =>{
-                el.children.forEach((children: any)  =>{
-                   let element = this.secondaryHeader.find(header => header.key === children.key)
-                   if (element) orderedHeaderSecondary.push(element)
-                })  
-        })
-        this.secondaryHeader = orderedHeaderSecondary;
-    }
+
 
 /* FILTERS */
 
@@ -202,7 +193,7 @@ export default class TableTest extends Vue {
             let found = this.secondaryHeader.find(ele => ele.key === el.key);
             if (found) el.shown = true;
             else el.shown = false
-        })
+        });
     }
 
     orderItems(){

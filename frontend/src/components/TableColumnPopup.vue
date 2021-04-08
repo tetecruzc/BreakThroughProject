@@ -13,7 +13,7 @@
                         <b-icon icon="trash" class="icon-dark mr-2" ></b-icon>
                         Remove column
                     </b-list-group-item>
-                    <b-list-group-item v-if="canColumnMove(col,'left') && !isFixedColumn(col)" @click="changeColumn('left')">
+                    <b-list-group-item v-if="canColumnMove(col,'left') && !isFixedColumn(col) && !isFixedColumnBeside()" @click="changeColumn('left')">
                         <b-icon icon="chevron-left" class="icon-dark mr-2" ></b-icon>
                         Move column left
                     </b-list-group-item>
@@ -21,7 +21,7 @@
                         <b-icon icon="chevron-right" class="icon-dark mr-2" ></b-icon>
                         Move column right
                     </b-list-group-item>
-                    <b-list-group-item v-if="!col.children && !isFixedColumn(col) && !existingColumn()" @click="changeColumn('pin')">
+                    <b-list-group-item v-if="!col.children && !isFixedColumn(col) && !existingColumnFixed()" @click="changeColumn('pin')">
                         <b-icon icon="geo" class="icon-dark mr-2" ></b-icon>
                         Pin
                     </b-list-group-item>
@@ -31,7 +31,7 @@
                     </b-list-group-item>
             </b-list-group>
         </b-popover>
-        <AddColumnPopup title="Editar columna" :col="col"  :primaryHeader="headers1" :secondaryHeader="originalHeaderSecondary" :showModal="showAddColumnModal"  @saveView="saveView" @changeModalStatus="changeModalStatus" @changeHeaders="sendHeadersToParent"/>
+        <AddColumnPopup title="Editar columna" :col="col"  :primaryHeader="headers1"   :secondaryHeader="originalHeaderSecondary" :showModal="showAddColumnModal"  @saveView="saveView" @changeModalStatus="changeModalStatus" @changeHeaders="sendHeadersToParent"/>
     </div>
 </template>
 
@@ -51,11 +51,12 @@ export default class TableColumnPopup extends Vue {
     @Prop() originalHeaderSecondary!: Array<any>;
     @Prop() items!: Array<any>; 
     @Prop() col: any; 
-    @Prop() allHeaderSecondary? : Array<any>;
     showAddColumnModal: boolean = false;
     currentChildren : Array<any> = []
 
+
     changeColumn(val: string){
+       
         if (this.col.children){
             this.moveColumns(this.headers1,val)
         }else{
@@ -119,8 +120,8 @@ export default class TableColumnPopup extends Vue {
         }
         else if (val === 'pin'){
             let {headers, headerSecondary} = this.getRemovedColumns(); 
-            this.col.pined = true
-            headerSecondary.unshift(this.col)
+            this.col.pined = true;
+            headerSecondary.unshift(this.col);
             let object ={
                 "name": 'Pined',
                 "key": 'pin',
@@ -129,8 +130,8 @@ export default class TableColumnPopup extends Vue {
                     this.col
                 ]
             }
-            headers.unshift(object)
-            this.sendHeadersToParent(headerSecondary, headers)
+            headers.unshift(object);
+            this.sendHeadersToParent(headerSecondary, headers);
         }
         else if (val === 'unpin'){
             let headers = this.headers1;
@@ -145,15 +146,23 @@ export default class TableColumnPopup extends Vue {
         }
     }
 
-    isFixedColumn(col: any){
+    isFixedColumn(col: any) : boolean{
             if ((col.key === 'pin') || (col.pined === true))  return true
             else return false
     }
 
-    existingColumn(){
+    existingColumnFixed() : boolean{
         let found = this.headers2.find((el: { pined: boolean;}) => el.pined === true)
         if (found) return true
         else return false
+    }
+
+    isFixedColumnBeside() : boolean {
+            if (this.existingColumnFixed()){
+               let index = this.headers1.findIndex(el => el.key === this.col.key);
+               if (index === 1) return true
+            }
+           return false
     }
 
     getRemovedColumns(): any{
@@ -267,19 +276,19 @@ export default class TableColumnPopup extends Vue {
             let stop = false;
             let totalChilds = 0;
             for (var column in this.headers2){
-                if (this.headers2[column].parent === col.key) {
+                if (this.headers2[column].parent === col.key && !this.headers2[column].pined) {
                     stop = true
                     newColumns.push(this.headers2[column])}
                 else {
                     if (!stop) totalChilds ++;
-                    oldColumns.push(this.headers2[column])}
-                
-            }     
+                    oldColumns.push(this.headers2[column]);
+                }    
+            }
             totalChilds = totalChilds + nextColumn.children.length 
             for (var column in newColumns){
                     oldColumns.splice(totalChilds,0,newColumns[column])
                     totalChilds++;
-            }   
+            }
             return oldColumns
         }
         

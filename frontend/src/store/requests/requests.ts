@@ -47,7 +47,7 @@ const requests: Module<RequestsStateInterface, any> = {
     actions:{
         async [RequestsTypes.actions.FETCH_ALL_REQUESTS]({ commit }): Promise<boolean> {
             try {
-                //const requests: any = await requestsRepository.getRequests(); 
+               // const requests: any = await requestsRepository.getRequests(); 
                 const requests : any ={
                     "views": [
                         {
@@ -104,12 +104,6 @@ const requests: Module<RequestsStateInterface, any> = {
                                             "key": "hora_y_fecha_de_verificacion"
                                         },
                                         {
-                                            "key": "estatus_de_venta"
-                                        },
-                                        {
-                                            "key": "estatus_de_transferencia"
-                                        },
-                                        {
                                             "key": "hora_y_fecha_de_venta"
                                         }
                                     ]
@@ -124,6 +118,19 @@ const requests: Module<RequestsStateInterface, any> = {
                                         },
                                         {
                                             "key": "cedula"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Status",
+                                    "key": "estatus",
+                                    "shown": true,
+                                    "children":[
+                                        {
+                                            "key": "estatus_de_transferencia"
+                                        },
+                                        {
+                                            "key": "estatus_de_venta"
                                         }
                                     ]
                                 }
@@ -223,13 +230,13 @@ const requests: Module<RequestsStateInterface, any> = {
                                     "name": "Estatus de venta",
                                     "key": "estatus_de_venta",
                                     "shown": true,
-                                    "parent": null
+                                    "parent": "estatus"
                                 },
                                 {
                                     "name": "Estatus de transferencia",
                                     "key": "estatus_de_transferencia",
                                     "shown": true,
-                                    "parent": null
+                                    "parent": "estatus"
                                 },
                                 {
                                     "name": "Cedula",
@@ -353,7 +360,6 @@ const requests: Module<RequestsStateInterface, any> = {
                         }
                     ]
                 }
-                console.log(requests)
                 commit(RequestsTypes.mutations.SET_REQUESTS, requests);
               //commit(RequestsTypes.mutations.SET_TOTAL_REQUESTS, requests.items.length);         
                 return true;

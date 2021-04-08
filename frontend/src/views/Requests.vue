@@ -84,7 +84,7 @@ export default class TableViewExample extends Vue {
     }
 
     beforeMount(){
-        this.currentView = this.views[1];
+        this.currentView = this.views[0];
     }
 
     async saveView(){

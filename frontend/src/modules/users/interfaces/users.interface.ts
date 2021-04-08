@@ -12,4 +12,4 @@ export interface User {
     company: Object; // cambiar
     geo: Object; //cambiar
     error: string;
-}
+};
