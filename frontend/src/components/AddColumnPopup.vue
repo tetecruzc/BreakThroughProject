@@ -17,7 +17,7 @@
                         </b-row>          
                     </b-col>
                     <b-col class="vertical-tabs__content pa-0">
-                        <b-row v-for="(content,j) in currentChildren" :key="j" class="px-2">
+                        <b-row v-for="(content,j) in categoryChildren" :key="j" class="px-2">
                             <b-form-checkbox class="my-2" v-model="content.shown">{{content.name}}</b-form-checkbox>
                         </b-row>
                     </b-col>
@@ -49,7 +49,7 @@ export default class AddColumnPopup extends Vue {
        this.secondaryHeaderLocal = this.secondaryHeader;  
        if (this.primaryHeader) this.currentTab = this.primaryHeader[0]!
        if (this.col) this.currentTab = this.col
-        this.currentChildren = this.categoryChildren;   
+       // this.currentChildren = this.categoryChildren;   
         
     }
 
@@ -71,13 +71,16 @@ export default class AddColumnPopup extends Vue {
         this.secondaryHeaderLocal = this.secondaryHeader;
     }
 
+
+
 /* MODAL */
     @Watch('showModal')
     renderModal(){
         this.primaryHeaderLocal = this.primaryHeader;
+        this.secondaryHeaderLocal = this.secondaryHeader;
         if (this.col) this.currentTab = this.col 
-        this.currentChildren = this.categoryChildren;
         this.show = this.showModal;
+        console.log(this.secondaryHeaderLocal)
     }
     @Watch('show')
     sendToParent(newVal: boolean){
@@ -85,11 +88,8 @@ export default class AddColumnPopup extends Vue {
     }
 /* END MODAL */
 
-   
-
     changeCurrentTab(tab: any){
         this.currentTab = tab;
-        this.currentChildren = this.categoryChildren
     }
 
     isCurrentTab(tab: any): boolean{
@@ -97,27 +97,28 @@ export default class AddColumnPopup extends Vue {
         else return false
     }
 
-
   saveView(){
-      
       this.show = false;
-      this.secondaryHeaderLocal = orderHeaderSecondary(this.primaryHeaderLocal,this.secondaryHeaderLocal);
       for (let i in this.primaryHeaderLocal){ 
           let children = this.secondaryHeaderLocal.filter(el => el.parent === this.primaryHeader[i].key && el.shown === true)
           if (children.length > 0){
               this.primaryHeaderLocal[i].children= []
               for (let j in children){
                  this.primaryHeaderLocal[i].children.push({key: children[j].key})
-              }
-              this.primaryHeaderLocal[i].shown = true
-          }else{
-             delete this.primaryHeaderLocal[i].children
-             if (this.primaryHeaderLocal[i].key !== 'pin') this.primaryHeaderLocal[i].shown = false
           }
+             // this.primaryHeaderLocal[i].shown = true
+        //   }else{
+        //      delete this.primaryHeaderLocal[i].children
+        //      if (this.primaryHeaderLocal[i].key !== 'pin') this.primaryHeaderLocal[i].shown = false
+        //   }
+          } else delete this.primaryHeaderLocal[i].children;
       }
+      this.secondaryHeaderLocal = orderHeaderSecondary(this.primaryHeaderLocal,this.secondaryHeaderLocal);
+      console.log(this.secondaryHeaderLocal)
+      console.log(this.primaryHeaderLocal)
       if (!this.col){
-      this.$emit('changeHeader1',this.primaryHeaderLocal)
-      this.$emit('changeHeader2',this.secondaryHeaderLocal)}
+          this.$emit('changeHeader1',this.primaryHeaderLocal)
+          this.$emit('changeHeader2',this.secondaryHeaderLocal)}
       else{
           this.$emit('changeHeaders',this.secondaryHeaderLocal,this.primaryHeaderLocal)
       }

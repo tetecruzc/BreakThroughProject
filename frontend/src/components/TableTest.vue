@@ -2,7 +2,7 @@
     <b-container>
         <b-row v-if="addColumnButton">
             <b-button class="button-primary my-3 ml-auto" @click="openModal()">Add column</b-button>
-            <AddColumnPopup title="Añadir columnas" :showModal="showAddColumnModal" :currentChildren="itemsWithoutParent"  @changeModalStatus="changeModalStatus" :primaryHeader="headersWithoutPined" :secondaryHeader="header2" :originalSecondaryHeader="header2" @changeHeader2="changeHeader2" @changeHeader1="changeHeader1"/>
+            <AddColumnPopup title="Añadir columnas" :showModal="showAddColumnModal" :currentChildren="itemsWithoutParent"  @changeModalStatus="changeModalStatus" :primaryHeader="headersWithoutPined" :secondaryHeader="header2" @changeHeader2="changeHeader2" @changeHeader1="changeHeader1"/>
         </b-row>
         <b-row>
             <b-table-simple responsive bordered >
@@ -75,7 +75,7 @@ export default class TableTest extends Vue {
 
     mounted(){
         if (this.perPage) this.perPageLocal = this.perPage;
-        this.$emit('sendHeaders',this.secondaryHeader)
+        this.$emit('sendHeaders',this.secondaryHeader);
     }
 
     getItemsKeys(items: any){
@@ -109,7 +109,7 @@ export default class TableTest extends Vue {
             this.filteredItems = this.items;
             this.secondaryHeader = orderHeaderSecondary(this.shownPrimaryHeader,this.secondaryHeader);
         }    
-        return this.secondaryHeader
+        return this.secondaryHeader  
     }
 
 
@@ -184,16 +184,22 @@ export default class TableTest extends Vue {
 
     changeHeader1(newVal : any){ 
         this.primaryHeader = newVal.filter((el: { shown: boolean; }) => el.shown === true);
+        
     }
 
     changeHeader2(newVal : any){ 
         this.secondaryHeader = newVal.filter((el: { shown: boolean; }) => el.shown === true);
         this.orderItems();
+
         this.header2.forEach(el => {
-            let found = this.secondaryHeader.find(ele => ele.key === el.key);
-            if (found) el.shown = true;
-            else el.shown = false
+            let found = this.secondaryHeader.find(ele => ele.key === el.key);    
+            if (found === undefined) {
+                console.log('entro')
+                el.shown = false;}
+            else el.shown = true
         });
+        console.log("Header2")
+        console.log(this.header2)
     }
 
     orderItems(){

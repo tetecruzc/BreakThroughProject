@@ -16,7 +16,7 @@
                                     <p class="label">Filtrar por nombre:</p>
                                     <div class="form-group">
                                         <b-dropdown :text="currentFilter.name" variant="outline" id="dropdown-left">
-                                        <b-dropdown-item  href="#" v-for="(header,i) in headerFilters" :key="i" @click="changeFilter(header)">{{header.name}}</b-dropdown-item>
+                                            <b-dropdown-item  href="#" v-for="(header,i) in headerFilters" :key="i" @click="changeFilter(header)">{{header.name}}</b-dropdown-item>
                                         </b-dropdown>
                                     </div>
                                     <div class="form-group">

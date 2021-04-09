@@ -273,7 +273,20 @@ const requests: Module<RequestsStateInterface, any> = {
                                             "key": "nombre_del_beneficiario"
                                         }
                                     ]
-                                }
+                                },
+                                // {
+                                //     "name": "Status",
+                                //     "key": "estatus",
+                                //     "shown": false,
+                                //     "children":[
+                                //         {
+                                //             "key": "estatus_de_transferencia"
+                                //         },
+                                //         {
+                                //             "key": "estatus_de_venta"
+                                //         }
+                                //     ]
+                                // }
                             ],
                             headerSecondary:[
                                 {
@@ -287,7 +300,19 @@ const requests: Module<RequestsStateInterface, any> = {
                                     "key": "nombre_del_beneficiario",
                                     "shown": true,
                                     "parent": null
-                                }
+                                },
+                                // {
+                                //     "name": "Estatus de venta",
+                                //     "key": "estatus_de_venta",
+                                //     "shown": false,
+                                //     "parent": "estatus"
+                                // },
+                                // {
+                                //     "name": "Estatus de transferencia",
+                                //     "key": "estatus_de_transferencia",
+                                //     "shown": false,
+                                //     "parent": "estatus"
+                                // },
                             ]
                         }
                     ],

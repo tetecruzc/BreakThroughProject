@@ -31,7 +31,7 @@
                     </b-list-group-item>
             </b-list-group>
         </b-popover>
-        <AddColumnPopup title="Editar columna" :col="col"  :primaryHeader="headers1"   :secondaryHeader="originalHeaderSecondary" :showModal="showAddColumnModal"  @saveView="saveView" @changeModalStatus="changeModalStatus" @changeHeaders="sendHeadersToParent"/>
+        <AddColumnPopup title="Editar columna" :col="col"  :primaryHeader="headers1" :secondaryHeader="originalHeaderSecondary" :showModal="showAddColumnModal"  @saveView="saveView" @changeModalStatus="changeModalStatus" @changeHeaders="sendHeadersToParent"/>
     </div>
 </template>
 
