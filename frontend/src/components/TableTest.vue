@@ -2,13 +2,13 @@
     <b-container>
         <b-row v-if="addColumnButton">
             <b-button class="button-primary my-3 ml-auto" @click="openModal()">Add column</b-button>
-            <AddColumnPopup title="Añadir columnas" :showModal="showAddColumnModal" :currentChildren="itemsWithoutParent"  @changeModalStatus="changeModalStatus" :primaryHeader="headersWithoutPined" :secondaryHeader="header2" @changeHeader2="changeHeader2" @changeHeader1="changeHeader1"/>
+            <AddColumnPopup title="Añadir columnas" :showModal="showAddColumnModal" :currentChildren="itemsWithoutParent"  @changeModalStatus="changeModalStatus" :primaryHeader="primaryHeader" :secondaryHeader="header2" @changeHeader2="changeHeader2" @changeHeader1="changeHeader1"/>
         </b-row>
         <b-row>
-            <b-table-simple responsive bordered >
+            <b-table-simple responsive bordered>
                 <b-thead>
                     <b-tr>
-                        <b-th v-for="(header,i) in shownPrimaryHeader"  :key="i" :colspan="header.children.length" :sticky-column="i === 0 && existingColumn() ? true : false" :class="i === 0 && existingColumn() ? 'pined' : ''"> 
+                        <b-th v-for="(header,i) in shownPrimaryHeader"  :key="i" :colspan="header.key === 'pin' ? 1 : header.children.length" :sticky-column="i === 0 && existingColumn() ? true : false" :class="i === 0 && existingColumn() ? 'pined' : ''"> 
                             <b-row class="m-0 flex-nowrap justify-content-center align-items-center">
                                 <p style="margin:0;">{{header.name === 'Pined' ? '' : header.name}}</p>
                                 <TableColumnPopup :id="'table-popover-1'+i" :items="orderedItems" :originalHeaderSecondary="header2" :headers1="primaryHeader" :headers2="secondaryHeader"  :col="header"  @changeHeader1="changeHeader1" @changeHeader2="changeHeader2" /> 
@@ -82,6 +82,13 @@ export default class TableTest extends Vue {
         return Object.keys(items)
     }
 
+    get header1WithPined(){
+       let pined = this.primaryHeader.find(el => el.key === 'pin');
+       let header = this.header1;
+       if (pined) header.unshift(pined)
+       return header
+    }
+
     checkBadgeStatus(value: any, key: any){
         let keyFound = this.standarts.find(el => el.key === key);
         if (keyFound) {
@@ -93,9 +100,6 @@ export default class TableTest extends Vue {
         }
     }
 
-    get headersWithoutPined(){
-        return this.header1.filter(el => el.key !== 'pin')
-    }
 
     isStatusField(key: any){
         let found = this.standarts.find(el => el.key === key)
@@ -183,23 +187,24 @@ export default class TableTest extends Vue {
 /* END PAGINATION */
 
     changeHeader1(newVal : any){ 
+       // this.primaryHeader = newVal
         this.primaryHeader = newVal.filter((el: { shown: boolean; }) => el.shown === true);
-        
+        this.header1.forEach(el => {
+            let found = this.primaryHeader.find(ele => ele.key === el.key);    
+            if (found === undefined) el.shown = false;
+            else el.shown = true
+        });
     }
 
     changeHeader2(newVal : any){ 
         this.secondaryHeader = newVal.filter((el: { shown: boolean; }) => el.shown === true);
         this.orderItems();
-
         this.header2.forEach(el => {
             let found = this.secondaryHeader.find(ele => ele.key === el.key);    
             if (found === undefined) {
-                console.log('entro')
                 el.shown = false;}
             else el.shown = true
         });
-        console.log("Header2")
-        console.log(this.header2)
     }
 
     orderItems(){

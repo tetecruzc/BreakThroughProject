@@ -13,11 +13,11 @@
                         <b-icon icon="trash" class="icon-dark mr-2" ></b-icon>
                         Remove column
                     </b-list-group-item>
-                    <b-list-group-item v-if="canColumnMove(col,'left') && !isFixedColumn(col) && !isFixedColumnBeside()" @click="changeColumn('left')">
+                    <b-list-group-item v-if="!isFixedColumn(col) && !isFixedColumnBeside() && canColumnMove(col,'left') " @click="changeColumn('left')">
                         <b-icon icon="chevron-left" class="icon-dark mr-2" ></b-icon>
                         Move column left
                     </b-list-group-item>
-                    <b-list-group-item v-if="canColumnMove(col,'right') && !isFixedColumn(col)" @click="changeColumn('right')">
+                    <b-list-group-item v-if="!isFixedColumn(col) && canColumnMove(col,'right') " @click="changeColumn('right')">
                         <b-icon icon="chevron-right" class="icon-dark mr-2" ></b-icon>
                         Move column right
                     </b-list-group-item>
@@ -102,14 +102,29 @@ export default class TableColumnPopup extends Vue {
             }
         }
       else if (val === 'remove'){
+            // if (this.col.children){
+            //     headers = this.removeColumn(this.headers1,this.col);
+            //     headerSecondary = this.headers2
+            //     for (var column in this.col.children){
+            //        headerSecondary = this.removeColumn(headerSecondary,this.col.children[column]) 
+            //     }
+            //     this.sendHeadersToParent(headerSecondary,headers)
+            // } 
+            // else {  
+            //     let {headers, headerSecondary} = this.getRemovedColumns();
+            //     this.sendHeadersToParent(headerSecondary, headers)
+            // }
             if (this.col.children){
-                headers = this.removeColumn(this.headers1,this.col);
-                headerSecondary = this.headers2
-                for (var column in this.col.children){
+                 let index = this.headers1.findIndex(el => el === this.col)
+                 headers = this.headers1;
+                 headers[index].shown = false;
+                 console.log(headers);
+                 headerSecondary = this.headers2
+                 for (var column in this.col.children){
                    headerSecondary = this.removeColumn(headerSecondary,this.col.children[column]) 
                 }
                 this.sendHeadersToParent(headerSecondary,headers)
-            } 
+            }
             else {  
                 let {headers, headerSecondary} = this.getRemovedColumns();
                 this.sendHeadersToParent(headerSecondary, headers)
@@ -130,6 +145,7 @@ export default class TableColumnPopup extends Vue {
                     this.col
                 ]
             }
+
             headers.unshift(object);
             this.sendHeadersToParent(headerSecondary, headers);
         }
@@ -299,15 +315,19 @@ export default class TableColumnPopup extends Vue {
         let childrenIndex = -1;
         let totalChildren = 0;
         let currentChildrenSize = 0;
-        if (!col.children){
+        if (col.key === 'pin') return false
+        else if (!col.children){
             for (var i=0;i<this.headers1.length;i++){ // Se recorre al header primario
-                let childrenExist = this.headers1[i].children.find((el: { key: any; }) => el.key === key); // Busco un padre que tenga el hijo actual
-                totalChildren = totalChildren + this.headers1[i].children.length; // Se acumulan la cantidad de hijos que existen hasta la columna actual
-                if (childrenExist){  // Cuando se llega al padre del hijo actual
-                    currentChildrenSize = this.headers1[i].children.length; // Cantidad de hijos que tiene el padre del hijo actual       
-                    childrenIndex = this.headers2.findIndex(el => el.key === key); // Halla el index del hijo actual en el header secundario
-                    break
+                if (this.headers1[i].children){
+                    let childrenExist = this.headers1[i].children.find((el: { key: any; }) => el.key === key); // Busco un padre que tenga el hijo actual
+                    totalChildren = totalChildren + this.headers1[i].children.length; // Se acumulan la cantidad de hijos que existen hasta la columna actual
+                    if (childrenExist){  // Cuando se llega al padre del hijo actual
+                        currentChildrenSize = this.headers1[i].children.length; // Cantidad de hijos que tiene el padre del hijo actual       
+                        childrenIndex = this.headers2.findIndex(el => el.key === key); // Halla el index del hijo actual en el header secundario
+                        break
+                    }
                 }
+                else return true;
             }
             if ( direction === 'right' && ((childrenIndex + 1) < totalChildren)) return true
             else if (direction === 'left' && ((totalChildren - currentChildrenSize) < childrenIndex)) return true

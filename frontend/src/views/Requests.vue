@@ -45,7 +45,7 @@
             </b-col>
     </b-row> 
     <b-row  v-if="getItems.length > 0">
-        <TableTest :addColumnButton="true" :standarts="getStandarts" :header1="currentView.headerPrimary" :header2="currentView.headerSecondary" :items="getItems" :perPage="perPage" :currentFilter="currentFilter" :currentOrderFilter="currentOrderFilter" :textFilter="textFilter" @sendHeaders="getHeaderFilters"/>
+        <TableTest :addColumnButton="true" :standarts="getStandarts"  :header1="currentView.headerPrimary" :header2="currentView.headerSecondary" :items="getItems" :perPage="perPage" :currentFilter="currentFilter" :currentOrderFilter="currentOrderFilter" :textFilter="textFilter" @sendHeaders="getHeaderFilters"/>
     </b-row>
     <b-spinner v-else class="my-4"></b-spinner>  
   </div>

@@ -11,14 +11,14 @@
                             <p>{{col.name === null ? 'Otras columnas' : col.name}}</p>
                             <b-icon icon="chevron-right" class="icon-dark icon-small mr-2" ></b-icon>
                         </b-row>
-                        <b-row v-else  v-for="(tab,i) in primaryHeaderLocal" :key="i" :class="isCurrentTab(tab) === true ? 'tabs p-2 pl-3 active' : 'tabs p-2 pl-3'" @click="changeCurrentTab(tab)">
+                        <b-row v-else  v-for="(tab,i) in primaryHeaderWithoutPined" :key="i"  :class="isCurrentTab(tab) === true ? 'tabs p-2 pl-3 active' : 'tabs p-2 pl-3'" @click="changeCurrentTab(tab)">
                             <p>{{tab.name === null ? 'Otras columnas' : tab.name}}</p>
                             <b-icon icon="chevron-right" class="icon-dark icon-small mr-2" ></b-icon>
                         </b-row>          
                     </b-col>
                     <b-col class="vertical-tabs__content pa-0">
                         <b-row v-for="(content,j) in categoryChildren" :key="j" class="px-2">
-                            <b-form-checkbox class="my-2" v-model="content.shown">{{content.name}}</b-form-checkbox>
+                            <b-form-checkbox v-if="!content.pined" class="my-2" v-model="content.shown">{{content.name}}</b-form-checkbox>
                         </b-row>
                     </b-col>
                 </b-row>
@@ -48,22 +48,40 @@ export default class AddColumnPopup extends Vue {
        this.primaryHeaderLocal = this.primaryHeader;
        this.secondaryHeaderLocal = this.secondaryHeader;  
        if (this.primaryHeader) this.currentTab = this.primaryHeader[0]!
+       else if (this.primaryHeader && this.existingColumnFixed()) this.currentTab = this.primaryHeaderWithoutPined[0]
        if (this.col) this.currentTab = this.col
        // this.currentChildren = this.categoryChildren;   
-        
     }
 
-     get categoryChildren() : Array<any>{ /* Retorna los hijos del tab seleccionado  */
-        let children : any = []
-        for (let i in this.secondaryHeaderLocal){
-            if (this.secondaryHeaderLocal[i].parent === this.currentTab.key) children.push(this.secondaryHeaderLocal[i])
+    existingColumnFixed() : boolean{
+        let found = this.secondaryHeaderLocal.find((el: { pined: boolean;}) => el.pined === true)
+        if (found) return true
+        else return false
+    }
+
+    get primaryHeaderWithoutPined(): any{
+        let newHeader =  this.primaryHeaderLocal.filter(el => el.key !== 'pin')
+        return newHeader
+    }
+
+
+     get categoryChildren() : any{ /* Retorna los hijos del tab seleccionado  */
+        try{
+            let children : any = []
+            for (let i in this.secondaryHeaderLocal){
+                if (this.secondaryHeaderLocal[i].parent === this.currentTab.key){ 
+                    children.push(this.secondaryHeaderLocal[i])
+                }
+            }
+            return children
         }
-        return children
+        catch(error){
+        }
     }
 
     @Watch('primaryHeader')
     changePrimaryHeader(){
-        this.primaryHeaderLocal = this.primaryHeader
+        this.primaryHeaderLocal = this.primaryHeader;
     }
 
     @Watch('secondaryHeader')
@@ -79,8 +97,8 @@ export default class AddColumnPopup extends Vue {
         this.primaryHeaderLocal = this.primaryHeader;
         this.secondaryHeaderLocal = this.secondaryHeader;
         if (this.col) this.currentTab = this.col 
+       // if (this.existingColumnFixed()) this.currentTab = this.primaryHeaderWithoutPined[0]
         this.show = this.showModal;
-        console.log(this.secondaryHeaderLocal)
     }
     @Watch('show')
     sendToParent(newVal: boolean){
@@ -100,22 +118,16 @@ export default class AddColumnPopup extends Vue {
   saveView(){
       this.show = false;
       for (let i in this.primaryHeaderLocal){ 
-          let children = this.secondaryHeaderLocal.filter(el => el.parent === this.primaryHeader[i].key && el.shown === true)
+          let children = this.secondaryHeaderLocal.filter(el => el.parent === this.primaryHeaderLocal[i].key && el.shown === true && !el.pined)
           if (children.length > 0){
               this.primaryHeaderLocal[i].children= []
               for (let j in children){
                  this.primaryHeaderLocal[i].children.push({key: children[j].key})
           }
-             // this.primaryHeaderLocal[i].shown = true
-        //   }else{
-        //      delete this.primaryHeaderLocal[i].children
-        //      if (this.primaryHeaderLocal[i].key !== 'pin') this.primaryHeaderLocal[i].shown = false
-        //   }
           } else delete this.primaryHeaderLocal[i].children;
       }
       this.secondaryHeaderLocal = orderHeaderSecondary(this.primaryHeaderLocal,this.secondaryHeaderLocal);
-      console.log(this.secondaryHeaderLocal)
-      console.log(this.primaryHeaderLocal)
+
       if (!this.col){
           this.$emit('changeHeader1',this.primaryHeaderLocal)
           this.$emit('changeHeader2',this.secondaryHeaderLocal)}
